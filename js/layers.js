@@ -65,9 +65,9 @@ addLayer("s", {
 		points: new Decimal(20),
     }},
     color: "#BD2020",
-    requires: new Decimal(10), // Can be a function that takes requirement increases into account
-    resource: "prestige points", // Name of prestige currency
-    baseResource: "points", // Name of resource prestige is based on
+    requires: new Decimal(20), // Can be a function that takes requirement increases into account
+    resource: "super points", // Name of prestige currency
+    baseResource: "prestige points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
@@ -78,6 +78,9 @@ addLayer("s", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
+    },
+    layerShown() { 
+        return true
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
