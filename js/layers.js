@@ -24,12 +24,20 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true},
     upgrades: {
         11: {
             title: "Beginning!",
             description: "x2 Points.",
             cost: new Decimal(3),
+        },
+        12: {
+            title: "Duplication!",
+            description: "x2 Prestige Points.",
+            cost: new Decimal(5),
+            effect() {
+                return player[this.layer].points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
     },
 })
