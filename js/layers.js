@@ -62,10 +62,10 @@ addLayer("s", {
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-		points: new Decimal(20),
+        points: new Decimal(0),
     }},
     color: "#BD2020",
-    requires: new Decimal(20), // Can be a function that takes requirement increases into account
+    requires: new Decimal(50), // Can be a function that takes requirement increases into account
     resource: "super points", // Name of prestige currency
     baseResource: "prestige points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
