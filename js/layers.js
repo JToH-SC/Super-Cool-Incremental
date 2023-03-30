@@ -45,7 +45,7 @@ addLayer("p", {
             description: "Points boost Prestige Points.",
             cost: new Decimal(6),
             unlocked() {
-
+                if (hasUpgrade('p', 12)) this.unlocked() = true
             },
             effect() {
                 return player.points.add(1).pow(0.15)
