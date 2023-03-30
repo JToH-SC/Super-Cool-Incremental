@@ -35,6 +35,9 @@ addLayer("p", {
             title: "Boosty!",
             description: "Prestige Points boost Points.",
             cost: new Decimal(3),
+            unlocked() {
+                if (hasUpgrade('p', 11)) return true
+            },
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
             },
