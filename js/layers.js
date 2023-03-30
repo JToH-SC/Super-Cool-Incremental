@@ -26,6 +26,8 @@ addLayer("p", {
     ],
     layerShown(){return true},
     11: {
-
+        title: "Beginning!",
+        description: "x2 Points.",
+        cost: new Decimal(1),
     },
 })
