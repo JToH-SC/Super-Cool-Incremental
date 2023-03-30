@@ -26,11 +26,10 @@ addLayer("p", {
     ],
     layerShown(){return true},
     upgrades: {
-        
-    },
-    11: {
-        title: "Beginning!",
-        description: "x2 Points.",
-        cost: new Decimal(1),
+        11: {
+            title: "Beginning!",
+            description: "x2 Points.",
+            cost: new Decimal(1),
+        },
     },
 })
