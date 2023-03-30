@@ -29,7 +29,7 @@ addLayer("p", {
         11: {
             title: "Beginning!",
             description: "x2 Points.",
-            cost: new Decimal(1),
+            cost: new Decimal(3),
         },
     },
 })
