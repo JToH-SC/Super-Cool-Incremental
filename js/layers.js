@@ -81,7 +81,7 @@ addLayer("s", {
         return new Decimal(1)
     },
     layerShown() { 
-        return true
+        if (hasUpgrade("p", 13)) return true
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
