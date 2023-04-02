@@ -21,7 +21,9 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h2>update notation - vA.B.C</h2><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
-	C stands for very small patches.<br>
+	C stands for very small updates.<br>
+	<h3>v0.3.2</h3><br>
+	- Added 1 Super upgrade.<br>
 	<h3>v0.3.1</h3><br>
 	- Added 1 Duper upgrade.<br>
 	- Added 1 Super upgrade.<br>
@@ -55,10 +57,11 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
 	if (hasUpgrade('d', 11)) gain = gain.times(2)
 	if (hasUpgrade('s', 13)) gain = gain.times(3)
 	if (hasUpgrade('s', 11)) gain = gain.times(2)
+	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
+	if (hasUpgrade('s', 22)) gain = gain.times(upgradeEffect('s', 22))
 	return gain
 }
 
