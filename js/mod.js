@@ -13,16 +13,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Literally starting",
+	num: "0.2.0",
+	name: "Super Start",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.<br>
-	<h3>v0.1</h3><br>
-		- 1 layer, Super Points.`
+	<h2>update notation - vA.B.C</h2><br>
+	A stands for LARGE updates.<br>
+	B stands for content updates.<br>
+	C stands for very small patches.<br>
+	<h3>v0.2.0</h3><br>
+		- Added 3 upgrades to Super.<br>
+		- Added a new layer with 1 upgrade.<br>
+	<h3>v0.2.0</h3><br>
+		- 1 layer, Super.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -45,6 +49,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade('d', 11)) gain = gain.times(2)
 	if (hasUpgrade('s', 13)) gain = gain.times(3)
 	if (hasUpgrade('s', 11)) gain = gain.times(2)
 	return gain
