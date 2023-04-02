@@ -52,7 +52,7 @@ addLayer("s", {
         21: {
             title: "Super = Points",
             description: "Super Points boosts Point Gain.",
-            cost: new Decimal(5),
+            cost: new Decimal(10),
             tooltip: "super points+1^0.5*point gain",
             unlocked() {if (hasUpgrade("d", 12)) return true},
             effect() {
@@ -106,7 +106,7 @@ addLayer("d", {
         12: {
             title: "Super = Upgrade",
             description: "Unlock 2 new upgrades in the Super Layer.",
-            cost: new Decimal(3),
+            cost: new Decimal(2),
             tooltip: "+2 upgrades in super",
         },
     },
