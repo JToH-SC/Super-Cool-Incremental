@@ -1,35 +1,28 @@
 let modInfo = {
-	name: "Super Cool Incremental",
-	id: "JTSCIJT",
-	author: "jToH_SC",
+	name: "The Cool Tree",
+	id: "TheCoolTree",
+	author: "JToH_SC",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	initialStartPoints: new Decimal (10), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
-	name: "Fixing The Stuff I Made",
+	num: "0.1",
+	name: "Literally starting",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.3</h3><br>
-		- Fixed stuuufff~~~<br>
-		- Buffed super point requirement.<br>
-		- Added a new upgrade.<br>
-		- Still learning about code.<br>
-	<h3>v0.2</h3><br>
-		- Added a new layer.<br>
-		- Added 3 upgrades.<br>
-		- Still learning about code.<br>
+	<h3>v0.0</h3><br>
+		- Added things.<br>
+		- Added stuff.<br>
 	<h3>v0.1</h3><br>
-		- Game is created.<br>
-		- Learning about code.`
+		- 1 layer, Super Points.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -52,8 +45,6 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade('p', 11)) gain = gain.times(2)
-	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
 	return gain
 }
 
