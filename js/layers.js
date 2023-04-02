@@ -38,14 +38,14 @@ addLayer("s", {
         12: {
             title: "Super",
             description: "Double super point gain.",
-            cost: new Decimal(3),
+            cost: new Decimal(2),
             tooltip: "*2 to super points",
             unlocked() {if (hasUpgrade("s", 11)) return true}
         },
         13: {
             title: "Triplication",
             description: "Triple point gain.",
-            cost: new Decimal(7),
+            cost: new Decimal(5),
             tooltip: "*3 to points",
             unlocked() {if (hasUpgrade("s", 12)) return true}
         }
