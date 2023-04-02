@@ -22,6 +22,10 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v0.4.3</h3><br>
+	- Added a new layer, Mega.<br>
+	- Added a new upgrade to Duper.<br>
+	- Added 1 upgrade to Mega.<br>
 	<h3>v0.3.3</h3><br>
 	- Added a new Duper Milestone.<br>
 	<h3>v0.3.2</h3><br>
@@ -33,10 +37,10 @@ let changelog = `<h1>Changelog:</h1><br>
 	- Balanced Super Layer.<br>
 	- Nerfed Duper Layer requirements.<br>
 	<h3>v0.2.0</h3><br>
-		- Added 3 upgrades to Super.<br>
-		- Added a new layer, Duper with 1 upgrade.<br>
+	- Added 3 upgrades to Super.<br>
+	- Added a new layer, Duper with 1 upgrade.<br>
 	<h3>v0.2.0</h3><br>
-		- 1 layer, Super.`
+	- 1 layer, Super.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 

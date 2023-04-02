@@ -23,7 +23,7 @@ addLayer("s", {
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "s", description: "S: Reset for super points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     doReset(resettingLayer) {
         if (layers[resettingLayer].row <= this.row) return;
@@ -55,6 +55,13 @@ addLayer("s", {
             cost: new Decimal(5),
             tooltip: "*3 to points",
             unlocked() {if (hasUpgrade("s", 12)) return true}
+        },
+        14: {
+            title: "Duper!",
+            description: "Unlock a new layer!",
+            cost: new Decimal(8),
+            tooltip: "unlock a new layer",
+            unlocked() {if (hasUpgrade("s", 13)) return true}
         },
         21: {
             title: "Super = Points",
@@ -106,13 +113,13 @@ addLayer("d", {
     row: 1, // Row the layer is in on the tree (0 is the first row)
     branches: ["s", "d"],
     hotkeys: [
-        {key: "d", description: "D: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "d", description: "D: Reset for duper points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
         if (player.points > 100) return true
     },
     layerShown(){
-        return true
+        if (hasUpgrade("s", 14)) return true
     },
     milestones: {
         0: {
@@ -132,7 +139,65 @@ addLayer("d", {
             title: "Super = Upgrade",
             description: "Unlock 2 new upgrades in the Super Layer.",
             cost: new Decimal(2),
+            unlocked() {if (hasUpgrade("d", 11)) return true},
             tooltip: "+2 upgrades in super",
+        },
+        21: {
+            title: "Mega!",
+            description: "Unlock 2 new upgrades in the Super Layer.",
+            cost: new Decimal(4),
+            unlocked() {if (hasUpgrade("d", 12)) return true},
+            tooltip: "+2 upgrades in super",
+        },
+    },
+})
+addLayer("m", {
+    name: "mega", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#ffff00",
+    requires: new Decimal(10000), // Can be a function that takes requirement increases into account
+    resource: "mega points", // Name of prestige currency
+    baseResource: "points", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    branches: ["d", "m"],
+    hotkeys: [
+        {key: "m", description: "M: Reset for mega points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        if (player.points > 10000) return true
+    },
+    layerShown(){
+        if (hasUpgrade("d", 13)) return true
+    },
+    milestones: {
+        0: {
+            requirementDescription: "5 mega points",
+            effectDescription: "Keep duper upgrades on reset",
+            done() { return player.m.points.gte(5)}
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Yet Another Boost",
+            description: "Triple point gain.",
+            cost: new Decimal(1),
+            tooltip: "*3 to points"
         },
     },
 })
