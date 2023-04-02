@@ -48,7 +48,18 @@ addLayer("s", {
             cost: new Decimal(5),
             tooltip: "*3 to points",
             unlocked() {if (hasUpgrade("s", 12)) return true}
-        }
+        },
+        21: {
+            title: "Super = Points",
+            description: "Super Points boosts Point Gain.",
+            cost: new Decimal(5),
+            tooltip: "super points+1^0.5*point gain",
+            unlocked() {if (hasUpgrade("d", 12)) return true},
+            effect() {
+                return player[this.layer].points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
     },
 })
 addLayer("d", {
@@ -91,6 +102,12 @@ addLayer("d", {
             description: "Double point gain.",
             cost: new Decimal(1),
             tooltip: "*2 to points"
+        },
+        12: {
+            title: "Super = Upgrade",
+            description: "Unlock 2 new upgrades in the Super Layer.",
+            cost: new Decimal(3),
+            tooltip: "+2 upgrades in super",
         },
     },
 })

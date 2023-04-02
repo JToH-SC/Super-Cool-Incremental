@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.1",
-	name: "Duper Start",
+	num: "0.3.1",
+	name: "Epic Gaming, perhaps?",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,12 +22,15 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small patches.<br>
+	<h3>v0.3.1</h3><br>
+	- Added 1 Duper upgrade.<br>
+	- Added 1 Super upgrade.<br>
 	<h3>v0.2.1</h3><br>
 	- Balanced Super Layer.<br>
 	- Nerfed Duper Layer requirements.<br>
 	<h3>v0.2.0</h3><br>
 		- Added 3 upgrades to Super.<br>
-		- Added a new layer with 1 upgrade.<br>
+		- Added a new layer, Duper with 1 upgrade.<br>
 	<h3>v0.2.0</h3><br>
 		- 1 layer, Super.`
 
@@ -52,6 +55,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
 	if (hasUpgrade('d', 11)) gain = gain.times(2)
 	if (hasUpgrade('s', 13)) gain = gain.times(3)
 	if (hasUpgrade('s', 11)) gain = gain.times(2)
