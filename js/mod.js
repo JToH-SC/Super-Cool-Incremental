@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1",
-	name: "Epic Gaming, perhaps?",
+	num: "0.3.2",
+	name: "A Milestone of Truth",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,6 +22,8 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v0.3.3</h3><br>
+	- Added a new Duper Milestone.<br>
 	<h3>v0.3.2</h3><br>
 	- Added 1 Super upgrade.<br>
 	<h3>v0.3.1</h3><br>

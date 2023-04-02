@@ -25,6 +25,13 @@ addLayer("s", {
     hotkeys: [
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if (hasMilestone(0)) keep.push("upgrades");
+        layerDataReset(this.layer, keep);
+      },
     layerShown(){
         return true
     },
@@ -57,6 +64,17 @@ addLayer("s", {
             unlocked() {if (hasUpgrade("d", 12)) return true},
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        22: {
+            title: "Points = Points",
+            description: "Points boosts itself.",
+            cost: new Decimal(10),
+            tooltip: "points+1^0.15*point gain",
+            unlocked() {if (hasUpgrade("d", 12) && ("s", 21)) return true},
+            effect() {
+                return player.points.add(1).pow(0.15)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
@@ -95,6 +113,13 @@ addLayer("d", {
     },
     layerShown(){
         return true
+    },
+    milestones: {
+        0: {
+            requirementDescription: "5 duper points",
+            effectDescription: "Keep super upgrades on reset",
+            done() { return player.d.points.gte(5)}
+        },
     },
     upgrades: {
         11: {
