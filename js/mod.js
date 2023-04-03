@@ -23,7 +23,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
 	<h3>v1.0.0</h3><br>
-	- The 2 new upgrades in the Super layer.<br>
+	- Changed the 2 new upgrades in the Super layer.<br>
 	- Fixed the Duper milestone glitch.<br>
 	- Mega actually shows up now!<br>
 	- Nerfed Mega requirements.<br>
