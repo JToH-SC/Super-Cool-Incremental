@@ -22,6 +22,10 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v1.1.0</h3><br>
+	- Fixed a Duper upgrade description.<br>
+	- Added 1 more upgrade to Mega.<br>
+	- ADDED ACHIEVEMENTS!!!<br>
 	<h3>v1.0.0</h3><br>
 	- Changed the 2 new upgrades in the Super layer.<br>
 	- Fixed the Duper milestone glitch.<br>

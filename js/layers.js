@@ -1,3 +1,33 @@
+addLayer("ac", {
+    name: "achievements", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "AC", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#faff61",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "achievements", // Name of prestige currency
+    type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    row: "side", // Row the layer is in on the tree (0 is the first row)
+    unlocked() {
+        return true
+    },
+    layerShown(){
+        return true
+    },
+    achievements: {
+        11: {
+            name: "Beginned",
+            tooltip: "Get your first Super Point",
+            image: "https://play-lh.googleusercontent.com/ZnBhulPLzAvz5mx7E5RGoue6TVNUEiBMhCCmXYiXIfRjnG4RplBOFKuOOQrcjrS5-cw=w90-h480-rw",
+            done() {
+                if (player["s"].points >= 1) return true
+            }
+        },
+    },
+})
 addLayer("s", {
     name: "super", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -107,7 +137,7 @@ addLayer("d", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-
+        if (hasUpgrade("m", 12)) mult = mult.times(2)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -154,10 +184,10 @@ addLayer("d", {
         },
         13: {
             title: "Mega!",
-            description: "Unlock 2 new upgrades in the Super Layer.",
+            description: "Unlock a new layer.",
             cost: new Decimal(4),
             unlocked() {if (hasUpgrade("d", 12)) return true},
-            tooltip: "+2 upgrades in super",
+            tooltip: "unlock a new layer",
         },
     },
 })
@@ -208,6 +238,12 @@ addLayer("m", {
             description: "Triple point gain.",
             cost: new Decimal(1),
             tooltip: "*3 to points"
+        },
+        12: {
+            title: "Upgrades = Points",
+            description: "Doubles Duper Point gain..",
+            cost: new Decimal(2),
+            tooltip: "duper points*2",
         },
     },
 })
