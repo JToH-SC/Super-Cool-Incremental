@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Cool Tree",
+	name: "The Cool Chain",
 	id: "TheCoolTree",
 	author: "JToH_SC",
 	pointsName: "points",
@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4.2",
-	name: "Mega Start!",
+	num: "1.0.0",
+	name: "killed the Bugs",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,15 +22,22 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
-	<h3>v0.4.3</h3><br>
+	<h3>v1.0.0</h3><br>
+	- The 2 new upgrades in the Super layer.<br>
+	- Fixed the Duper milestone glitch.<br>
+	- Mega actually shows up now!<br>
+	- Nerfed Mega requirements.<br>
+	- The Mega upgrade actually works.<br>
+	- The Mega milestone actually works.<br>
+	<h3>v0.4.0</h3><br>
 	- Added a new layer, Mega.<br>
 	- Added a new upgrade to Duper.<br>
 	- Added 1 upgrade to Mega.<br>
-	<h3>v0.3.3</h3><br>
-	- Added a new Duper Milestone.<br>
 	<h3>v0.3.2</h3><br>
-	- Added 1 Super upgrade.<br>
+	- Added a new Duper Milestone.<br>
 	<h3>v0.3.1</h3><br>
+	- Added 1 Super upgrade.<br>
+	<h3>v0.3.0</h3><br>
 	- Added 1 Duper upgrade.<br>
 	- Added 1 Super upgrade.<br>
 	<h3>v0.2.1</h3><br>
@@ -39,7 +46,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.2.0</h3><br>
 	- Added 3 upgrades to Super.<br>
 	- Added a new layer, Duper with 1 upgrade.<br>
-	<h3>v0.2.0</h3><br>
+	<h3>v0.1.0</h3><br>
 	- 1 layer, Super.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -63,11 +70,12 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade('m', 11)) gain = gain.times(3)
 	if (hasUpgrade('d', 11)) gain = gain.times(2)
+	if (hasUpgrade('s', 22)) gain = gain.times(upgradeEffect('s', 22))
+	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
 	if (hasUpgrade('s', 13)) gain = gain.times(3)
 	if (hasUpgrade('s', 11)) gain = gain.times(2)
-	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
-	if (hasUpgrade('s', 22)) gain = gain.times(upgradeEffect('s', 22))
 	return gain
 }
 

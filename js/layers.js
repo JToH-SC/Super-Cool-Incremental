@@ -29,9 +29,12 @@ addLayer("s", {
         if (layers[resettingLayer].row <= this.row) return;
       
         let keep = [];
-        if (hasMilestone(0)) keep.push("upgrades");
+        if (hasMilestone("d", 0)) keep.push("upgrades");
         layerDataReset(this.layer, keep);
       },
+    unlocked() {
+        return true
+    },
     layerShown(){
         return true
     },
@@ -68,18 +71,18 @@ addLayer("s", {
             description: "Super Points boosts Point Gain.",
             cost: new Decimal(10),
             tooltip: "super points+1^0.5*point gain",
-            unlocked() {if (hasUpgrade("d", 12)) return true},
+            unlocked() {if ((hasUpgrade("d", 12)) && (hasUpgrade("s", 14))) return true},
             effect() {
-                return player[this.layer].points.add(1).pow(0.5)
+                return player[this.layer].points.add(1).pow(0.1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
         22: {
             title: "Points = Points",
             description: "Points boosts itself.",
-            cost: new Decimal(10),
+            cost: new Decimal(20),
             tooltip: "points+1^0.15*point gain",
-            unlocked() {if (hasUpgrade("d", 12) && ("s", 21)) return true},
+            unlocked() {if ((hasUpgrade("d", 12)) && (hasUpgrade("s", 21))) return true},
             effect() {
                 return player.points.add(1).pow(0.15)
             },
@@ -116,11 +119,18 @@ addLayer("d", {
         {key: "d", description: "D: Reset for duper points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
-        if (player.points > 100) return true
-    },
-    layerShown(){
         if (hasUpgrade("s", 14)) return true
     },
+    layerShown() {
+        return player[this.layer].unlocked || (hasUpgrade("s", 14))
+    },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if (hasMilestone("m", 0)) keep.push("upgrades");
+        layerDataReset(this.layer, keep);
+      },
     milestones: {
         0: {
             requirementDescription: "5 duper points",
@@ -142,7 +152,7 @@ addLayer("d", {
             unlocked() {if (hasUpgrade("d", 11)) return true},
             tooltip: "+2 upgrades in super",
         },
-        21: {
+        13: {
             title: "Mega!",
             description: "Unlock 2 new upgrades in the Super Layer.",
             cost: new Decimal(4),
@@ -160,7 +170,7 @@ addLayer("m", {
 		points: new Decimal(0),
     }},
     color: "#ffff00",
-    requires: new Decimal(10000), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1500), // Can be a function that takes requirement increases into account
     resource: "mega points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
@@ -180,10 +190,10 @@ addLayer("m", {
         {key: "m", description: "M: Reset for mega points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
-        if (player.points > 10000) return true
+        if (hasUpgrade("d", 21)) return true
     },
-    layerShown(){
-        if (hasUpgrade("d", 13)) return true
+    layerShown() {
+        return player[this.layer].unlocked || (hasUpgrade("d", 13))
     },
     milestones: {
         0: {
