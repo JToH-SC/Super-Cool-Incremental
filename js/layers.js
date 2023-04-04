@@ -312,10 +312,10 @@ addLayer("s+", {
         {key: "shift+s", description: "Shift+S: Reset for super+ points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
-        return true
+        if (hasUpgrade("d", 21)) return true
     },
     layerShown(){
-        return true
+        return player[this.layer].unlocked || (hasUpgrade("m", 13))
     },
     upgrades: {
         11: {
