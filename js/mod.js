@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1.0",
-	name: "Achieving",
+	num: "1.2.0",
+	name: "Achieved and Layers",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,6 +22,13 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v2.0.0</h3><br>
+	- Added a Super milestone.<br>
+	- Achievements finally have a working counter.<br>
+	- Added 1 more upgrade to Mega.<br>
+	- Buffed the Mega milestone effect and nerfed its requirements.<br>
+	- Added a new layer, Super+.<br>
+	- Added 1 upgrade to Super+.<br>
 	<h3>v1.1.0</h3><br>
 	- Fixed a Duper upgrade description.<br>
 	- Added 1 more upgrade to Mega.<br>
@@ -68,12 +75,13 @@ function canGenPoints(){
 	return true
 }
 
-// Calculate points/sec!
+// Calculate points/sec!s
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade('m', 12)) gain = gain.times(upgradeEffect('m', 12))
 	if (hasUpgrade('m', 11)) gain = gain.times(3)
 	if (hasUpgrade('d', 11)) gain = gain.times(2)
 	if (hasUpgrade('s', 22)) gain = gain.times(upgradeEffect('s', 22))

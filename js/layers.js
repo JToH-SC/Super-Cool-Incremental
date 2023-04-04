@@ -1,21 +1,30 @@
-addLayer("ac", {
+addLayer("a", {
     name: "achievements", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "AC", // This appears on the layer's node. Default is the id with the first letter capitalized
+    symbol: "A", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
     }},
     color: "#faff61",
-    requires: new Decimal(10), // Can be a function that takes requirement increases into account
     resource: "achievements", // Name of prestige currency
     type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     row: "side", // Row the layer is in on the tree (0 is the first row)
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(0)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
     unlocked() {
         return true
     },
     layerShown(){
         return true
+    },
+    update() {
+        player.a.points = new Decimal(player.a.achievements.length)
     },
     achievements: {
         11: {
@@ -23,8 +32,8 @@ addLayer("ac", {
             tooltip: "Get your first Super Point",
             image: "https://play-lh.googleusercontent.com/ZnBhulPLzAvz5mx7E5RGoue6TVNUEiBMhCCmXYiXIfRjnG4RplBOFKuOOQrcjrS5-cw=w90-h480-rw",
             done() {
-                if (player["s"].points >= 1) return true
-            }
+                if ((player["s"].points >= 1) ) return true
+            },
         },
     },
 })
@@ -45,6 +54,7 @@ addLayer("s", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('s+', 11)) mult = mult.times(2)
         if (hasUpgrade('s', 12)) mult = mult.times(2)
         return mult
     },
@@ -62,11 +72,22 @@ addLayer("s", {
         if (hasMilestone("d", 0)) keep.push("upgrades");
         layerDataReset(this.layer, keep);
       },
+    passiveGeneration() {
+        if (hasMilestone('s', 0)) return 0.1
+        else return 0
+    },
     unlocked() {
         return true
     },
     layerShown(){
         return true
+    },
+    milestones: {
+        0: {
+            requirementDescription: "250 super points",
+            effectDescription: "Passively 10% of super point gain every second.",
+            done() { return player.s.points.gte(250)}
+        },
     },
     upgrades: {
         11: {
@@ -100,7 +121,7 @@ addLayer("s", {
             title: "Super = Points",
             description: "Super Points boosts Point Gain.",
             cost: new Decimal(10),
-            tooltip: "super points+1^0.5*point gain",
+            tooltip: "super points+1^0.1*point gain",
             unlocked() {if ((hasUpgrade("d", 12)) && (hasUpgrade("s", 14))) return true},
             effect() {
                 return player[this.layer].points.add(1).pow(0.1)
@@ -137,7 +158,6 @@ addLayer("d", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade("m", 12)) mult = mult.times(2)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -159,6 +179,13 @@ addLayer("d", {
       
         let keep = [];
         if (hasMilestone("m", 0)) keep.push("upgrades");
+        layerDataReset(this.layer, keep);
+      },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if (hasMilestone("m", 0)) keep.push("milestones");
         layerDataReset(this.layer, keep);
       },
     milestones: {
@@ -227,9 +254,9 @@ addLayer("m", {
     },
     milestones: {
         0: {
-            requirementDescription: "5 mega points",
-            effectDescription: "Keep duper upgrades on reset",
-            done() { return player.m.points.gte(5)}
+            requirementDescription: "3 mega points",
+            effectDescription: "Keep duper upgrades and milestones on reset",
+            done() { return player.m.points.gte(3)}
         },
     },
     upgrades: {
@@ -240,10 +267,62 @@ addLayer("m", {
             tooltip: "*3 to points"
         },
         12: {
-            title: "Upgrades = Points",
-            description: "Doubles Duper Point gain..",
+            title: "Duper = Points",
+            description: "Duper Points boosts Point Gain.",
             cost: new Decimal(2),
-            tooltip: "duper points*2",
+            tooltip: "duper points+1^0.25 * points",
+            effect() {
+                return player["d"].points.add(1).pow(0.25)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        13: {
+            title: "Extra Super",
+            description: "Unlocks an extra layer to Super.",
+            cost: new Decimal(3),
+            tooltip: "unlocks an extra layer to super layer",
+        },
+    },
+})
+addLayer("s+", {
+    name: "super+", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "S+", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#cc0000",
+    requires: new Decimal(2000), // Can be a function that takes requirement increases into account
+    resource: "super+ points", // Name of prestige currency
+    baseResource: "points", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    branches: ["s", "s+"],
+    row: 0, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "shift+s", description: "Shift+S: Reset for super+ points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return true
+    },
+    layerShown(){
+        return true
+    },
+    upgrades: {
+        11: {
+            title: "Old Start!",
+            description: "Double super point gain.",
+            cost: new Decimal(1),
+            tooltip: "*2 to super points",
         },
     },
 })
