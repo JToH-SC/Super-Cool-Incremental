@@ -289,7 +289,7 @@ addLayer("s+", {
     symbol: "S+", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: true,
+        unlocked: false,
 		points: new Decimal(0),
     }},
     color: "#cc0000",
@@ -312,7 +312,7 @@ addLayer("s+", {
         {key: "shift+s", description: "Shift+S: Reset for super+ points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
-        if (hasUpgrade("d", 21)) return true
+        if (hasUpgrade("m", 13)) return true
     },
     layerShown(){
         return player[this.layer].unlocked || (hasUpgrade("m", 13))
