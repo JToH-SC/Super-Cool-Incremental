@@ -35,8 +35,23 @@ addLayer("a", {
                 if ((player["s"].points >= 1) ) return true
             },
         },
-    },
-})
+        12: {
+            name: "Bad Name for A Layer",
+            tooltip: "Get your first Duper Point",
+            image: "https://cdn.discordapp.com/attachments/978493156058333195/1092766350109311016/Untitled789_20230404190306.png",
+            done() {
+                if ((player["d"].points >= 1) ) return true
+            },
+        },
+        13: {
+            name: "Megaly Cool",
+            tooltip: "Get your first Mega Point",
+            image: "https://cdn.discordapp.com/attachments/978493156058333195/1092766735461011506/Untitled789_20230404190438.png",
+            done() {
+                if ((player["d"].points >= 1) ) return true
+            },
+        },
+}}),
 addLayer("s", {
     name: "super", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
