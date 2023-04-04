@@ -48,7 +48,7 @@ addLayer("a", {
             tooltip: "Get your first Mega Point",
             image: "https://cdn.discordapp.com/attachments/978493156058333195/1092766735461011506/Untitled789_20230404190438.png",
             done() {
-                if ((player["d"].points >= 1) ) return true
+                if ((player["m"].points >= 1) ) return true
             },
         },
 }}),
