@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.0.1",
+	num: "2.1.0",
 	name: "Achiever",
 }
 
@@ -22,6 +22,12 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v2.1.0</h3><br>
+	- Added some sub-tabs for Super.<br>
+	- Added 5 more achievements.<br>
+	- Tweaked a couple of things.<br>
+	- Added 1 more upgrade to Super+.<br>
+	- Added an unfinished challenge for Super.<br>
 	<h3>v2.0.1</h3><br>
 	- Added 2 new achievements.<br>
 	<h3>v2.0.0</h3><br>

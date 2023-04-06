@@ -30,9 +30,9 @@ addLayer("a", {
         11: {
             name: "Beginned",
             tooltip: "Get your first Super Point",
-            image: "https://play-lh.googleusercontent.com/ZnBhulPLzAvz5mx7E5RGoue6TVNUEiBMhCCmXYiXIfRjnG4RplBOFKuOOQrcjrS5-cw=w90-h480-rw",
+            image: "https://cdn.discordapp.com/attachments/978493156058333195/1093457139617509406/Untitled789_20230406164732.png",
             done() {
-                if ((player["s"].points >= 1) ) return true
+                if (player["s"].points.gte(1) ) return true
             },
         },
         12: {
@@ -40,15 +40,55 @@ addLayer("a", {
             tooltip: "Get your first Duper Point",
             image: "https://cdn.discordapp.com/attachments/978493156058333195/1092766350109311016/Untitled789_20230404190306.png",
             done() {
-                if ((player["d"].points >= 1) ) return true
+                if ((player["d"].points.gte(1)) ) return true
             },
         },
         13: {
+            name: "They Call Me 1000",
+            tooltip: "Get 1000 Points",
+            image: "https://cdn.discordapp.com/attachments/1092032478312661042/1093131528491499610/Untitled789_20230405053803.png",
+            done() {
+                if ((player.points.gte(1000)) ) return true
+            },
+        },
+        14: {
             name: "Megaly Cool",
             tooltip: "Get your first Mega Point",
             image: "https://cdn.discordapp.com/attachments/978493156058333195/1092766735461011506/Untitled789_20230404190438.png",
             done() {
-                if ((player["m"].points >= 1) ) return true
+                if ((player["m"].points.gte(1)) ) return true
+            },
+        },
+        15: {
+            name: "Why only 10%?",
+            tooltip: "Get the 1st Super Milestone",
+            image: "https://cdn.discordapp.com/attachments/1092032478312661042/1093131528713818212/Untitled789_20230405191357.png",
+            done() {
+                if (hasMilestone('s', 0) ) return true
+            },
+        },
+        21: {
+            name: "Mega'd Up",
+            tooltip: "Get 5 Mega Points",
+            image: "https://cdn.discordapp.com/attachments/978493156058333195/1093457139902717972/Untitled789_20230406164800.png",
+            done() {
+                if (player['m'].points.gte(5)) return true
+            },
+        },
+        22: {
+            name: "Sub-way Layer",
+            tooltip: "Unlock Super+ Points",
+            image: "https://cdn.discordapp.com/attachments/1092032478312661042/1093132586672467968/Untitled789_20230405191801.png",
+            done() {
+                return (hasUpgrade("m", 13))
+            },
+        },
+        23: {
+            name: "15+ Only",
+            tooltip: "Get 15 Super+ Points",
+            image: "https://cdn.discordapp.com/attachments/1092032478312661042/1093130131444346900/Untitled789_20230405142823.png",
+            done() {
+                if (player["s+"].points.gte(15)) return true
             },
         },
 }}),
@@ -91,17 +131,55 @@ addLayer("s", {
         if (hasMilestone('s', 0)) return 0.1
         else return 0
     },
+    tabFormat: {
+        "Upgrades": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.points) + ' points' },
+        { "color": "white", "font-size": "px", "font-family": "Lucida Console" }],
+                "blank",
+                ["toggle", ["c", "beep"]],
+                "milestones",
+                "blank",
+                "blank",
+                "upgrades"
+            ],
+        },
+        "Challenges": {
+            unlocked() {
+                return (hasUpgrade("s+", 12))
+            },
+            content: [
+                "challenges",
+            ]
+        },
+    },
     unlocked() {
         return true
     },
     layerShown(){
         return true
     },
+    challenges: {
+        11: {
+            name: "Minimal Upgrades",
+            challengeDescription: "Point gain is halved for every upgrade you have.",
+            rewardDescription: "Point gain is tripled for every milestone unlocked.",
+            canComplete: function() {return player.points.gte(100)},
+            completionLimit: 3,
+        },
+    },
     milestones: {
         0: {
             requirementDescription: "250 super points",
             effectDescription: "Passively 10% of super point gain every second.",
-            done() { return player.s.points.gte(250)}
+            done() { return player.s.points.gte(250)},
+            unlocked() {
+                return player['s'].milestones.unlocked || (player['m'].points.gte(1))
+            },
         },
     },
     upgrades: {
@@ -286,6 +364,9 @@ addLayer("m", {
             description: "Duper Points boosts Point Gain.",
             cost: new Decimal(2),
             tooltip: "duper points+1^0.25 * points",
+            unlocked() {
+            if (hasUpgrade("m", 11)) return true
+        },
             effect() {
                 return player["d"].points.add(1).pow(0.25)
             },
@@ -296,6 +377,9 @@ addLayer("m", {
             description: "Unlocks an extra layer to Super.",
             cost: new Decimal(3),
             tooltip: "unlocks an extra layer to super layer",
+            unlocked() {
+                if (hasUpgrade("m", 12)) return true
+            },
         },
     },
 })
@@ -338,6 +422,12 @@ addLayer("s+", {
             description: "Double super point gain.",
             cost: new Decimal(1),
             tooltip: "*2 to super points",
+        },
+        12: {
+            title: "A Super Challenge",
+            description: "Unlock Super Challenges.",
+            cost: new Decimal(4),
+            tooltip: "*unlock a challenge sub-tab in super layer",
         },
     },
 })
