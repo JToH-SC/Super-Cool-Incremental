@@ -2,7 +2,7 @@ let modInfo = {
 	name: "Button Simulator Chain",
 	id: "TheMultiTree",
 	author: "jToH_SC",
-	pointsName: "points",
+	pointsName: "cash",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -43,7 +43,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	gain = gain.times(player['m'].points.add(1).times(2))
+	gain = gain.times(player.m.points.add(1))
 	return gain
 }
 
