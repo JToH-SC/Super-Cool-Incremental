@@ -84,10 +84,10 @@ addLayer("tlg", {
         {key: "l", description: "L - Reset for The Lower Gap Points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
-        return player.tfird.points.gte(10)
+        if (player.tfird.points.gte(10)) return true
     },
     layerShown(){
-        return this.layer.layerShown || player.tfird.points.gte(10)
+        return player['tlg'].unlocked || player.tfird.points.gte(10)
     },
     tabFormat: {
         "Main": {
