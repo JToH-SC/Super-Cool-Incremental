@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "Button Simulator Chain",
-	id: "TheMultiTree",
+	name: "The JJT Tree",
+	id: "TheJJJJJTTree",
 	author: "jToH_SC",
-	pointsName: "cash",
+	pointsName: "skill",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -13,13 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
-	name: "Fixing The Stuff I Made",
+	num: "0.1",
+	name: "JJT'ing",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.3</h3><br>
-		- made 3 layers.<br>`
+	<h3>v0.1</h3><br>
+		- begun developing<br>
+		- added TFirD layer<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -42,7 +43,8 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	gain = gain.times(player.m.points.add(1))
+	if (hasUpgrade('tfird', 12)) gain = gain.times(3)
+	if (hasUpgrade('tfird', 11)) gain = gain.times(2)
 	return gain
 }
 
