@@ -45,13 +45,13 @@ addLayer("tfird", {
     },
     upgrades: {
         11: {
-            title: "Winning",
-            description: "Double skill gain.",
+            title: "winning",
+            description: "double skill gain",
             cost: new Decimal(1)
         },
         12: {
-            title: "Winning",
-            description: "Triple skill gain.",
+            title: "winning again",
+            description: "tripl skill gain",
             cost: new Decimal(2)
         },
     },
@@ -104,8 +104,8 @@ addLayer("tlg", {
     },
     upgrades: {
         11: {
-            title: "Winning",
-            description: "Double skill gain.",
+            title: "i love winning",
+            description: "double skill gain again?!",
             cost: new Decimal(1)
         },
     },
