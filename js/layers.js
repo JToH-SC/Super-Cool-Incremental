@@ -1,6 +1,6 @@
 addLayer("tfird", {
     name: "The First Difficulty", // This is optional, only used in a few places, If absent it just uses the layer id.
-    image: "file:///C:/Users/Jacob%20De%20Leon/Downloads/1a.webp",
+    image: "https://cdn.discordapp.com/attachments/978493156058333195/1093862347015192636/1a.webp",
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
@@ -58,7 +58,7 @@ addLayer("tfird", {
 })
 addLayer("tlg", {
     name: "The Lower Gap", // This is optional, only used in a few places, If absent it just uses the layer id.
-    image: "file:///C:/Users/Jacob%20De%20Leon/Downloads/2a.webp",
+    image: "https://cdn.discordapp.com/attachments/978493156058333195/1093862361665912853/2a.webp",
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
