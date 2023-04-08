@@ -6,7 +6,7 @@ addLayer("tfird", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#1f1f1f",
+    color: "#ffffff",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
     resource: "The First Difficulty points", // Name of prestige currency
     baseResource: "skill", // Name of resource prestige is based on
@@ -43,16 +43,66 @@ addLayer("tfird", {
             ],
         },
     },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if (hasMilestone("tlg", 0)) keep.push("upgrades");
+        layerDataReset(this.layer, keep);
+    },
     upgrades: {
         11: {
             title: "winning",
-            description: "double skill gain",
-            cost: new Decimal(1)
+            description: "get 1 skill per second",
+            cost: new Decimal(0)
         },
         12: {
+            title: "winning v2.0",
+            description: "double skill gain",
+            unlocked() {
+                return (hasUpgrade("tfird", 11))
+            },
+            cost: new Decimal(1)
+        },
+        13: {
             title: "winning again",
             description: "tripl skill gain",
+            unlocked() {
+                return (hasUpgrade("tfird", 12))
+            },
             cost: new Decimal(2)
+        },
+        21: {
+            title: "i found more winning",
+            description: "skil gain is boosted by the first difficulty points",
+            unlocked() {
+                if ((hasUpgrade("tlg", 12)) && (hasUpgrade("tfird", 13))) return true
+            },
+            effect() {
+                return player[this.layer].points.add(1).pow(0.35)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            cost: new Decimal(5)
+        },
+        22: {
+            title: "upgrade winenr",
+            description: "upgrade boosts skill gain",
+            unlocked() {
+                if ((hasUpgrade("tlg", 12)) && (hasUpgrade("tfird", 21))) return true
+            },
+            effect() {
+                return new Decimal(player[this.layer].upgrades.length).add(1).pow(0.75)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            cost: new Decimal(10)
+        },
+        23: {
+            title: "i am winning rn",
+            description: "4x skill gain",
+            unlocked() {
+                if ((hasUpgrade("tlg", 12)) && (hasUpgrade("tfird", 22))) return true
+            },
+            cost: new Decimal(40)
         },
     },
 })
@@ -98,9 +148,22 @@ addLayer("tlg", {
                 ["display-text",
         function() { return 'You have ' + format(player.points) + ' skill' },
         { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "blank",
+                "milestones",
+                "blank",
                 "upgrades"
             ],
         },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "3 the upper gap points",
+            effectDescription: "keep the first difficulty upgrades on reset",
+            unlocked() {
+                return (hasUpgrade("tlg", 12))
+            },
+            done() { return player.tlg.points.gte(3) }
+        }
     },
     upgrades: {
         11: {
@@ -108,5 +171,67 @@ addLayer("tlg", {
             description: "double skill gain again?!",
             cost: new Decimal(1)
         },
+        12: {
+            title: "more winning",
+            description: "another row of the first difficulty upgrades!!",
+            unlocked() {
+                return (hasUpgrade("tlg", 11))
+            },
+            cost: new Decimal(2)
+        },
     },
+})
+addLayer("n", {
+    name: "Negativity", // This is optional, only used in a few places, If absent it just uses the layer id.
+    image: "https://cdn.discordapp.com/attachments/978493156058333195/1094184123213557801/3a.webp",
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#aa00ff",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Negativity", // Name of prestige currency
+    baseResource: "The Upper Gap points", // Name of resource prestige is based on
+    baseAmount() {return player.tlg.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    branches: ["tlg", 'n'],
+    hotkeys: [
+        {key: "n", description: "N - Reset for Negativity", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return true
+    },
+    layerShown(){
+        return true
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.points) + ' skill' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    upgrades: {
+        11: {
+            title: "define winning?",
+            description: "3x skill gain",
+            cost: new Decimal(1)
+        }
+    }
 })
