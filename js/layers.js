@@ -1,3 +1,43 @@
+addLayer("mile", {
+    name: "Milestones", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "M",
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#bd7aff",
+    resource: "milestones", // Name of prestige currency
+    baseResource: "points",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.points },
+    type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    row: "side", // Row the layer is in on the tree (0 is the first row)
+    unlocked() {
+        return true
+    },
+    layerShown(){
+        return true
+    },
+    update() {
+        return player[this.layer].points = player[this.layer].milestones.length
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "blank",
+                "milestones",
+            ],
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 negativity",
+            effectDescription: "keep the first difficulty upgrades on reset",
+            done() { return player.n.points.gte(1) }
+        }
+    },
+})
 addLayer("tfird", {
     name: "The First Difficulty", // This is optional, only used in a few places, If absent it just uses the layer id.
     image: "https://cdn.discordapp.com/attachments/978493156058333195/1093862347015192636/1a.webp",
@@ -35,6 +75,7 @@ addLayer("tfird", {
             content: [
                 "main-display",
                 "prestige-button",
+                "clickables",
                 "blank",
                 ["display-text",
         function() { return 'You have ' + format(player.points) + ' skill' },
@@ -42,13 +83,43 @@ addLayer("tfird", {
                 "upgrades"
             ],
         },
+        "Challenges": {
+            unlocked() {
+                return hasUpgrade('n', 12)
+            },
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.points) + ' skill' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "challenges"
+            ],
+        },
     },
     doReset(resettingLayer) {
         if (layers[resettingLayer].row <= this.row) return;
       
         let keep = [];
-        if (hasMilestone("tlg", 0)) keep.push("upgrades");
+        keep.push("challenges");
         layerDataReset(this.layer, keep);
+    },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if ((hasMilestone("tlg", 0)) || (hasMilestone("mile", 0))) keep.push("upgrades");
+        layerDataReset(this.layer, keep);
+    },
+    challenges: {
+        11: {
+            name: "winning is rooted",
+            challengeDescription: "skill gain is divided by 2",
+            goalDescription: "1,000 skill",
+            rewardDescription: "doubles the lower gap gain",
+            canComplete: function() {return player.points.gte(1000)},
+        },
     },
     upgrades: {
         11: {
@@ -105,6 +176,15 @@ addLayer("tfird", {
             cost: new Decimal(40)
         },
     },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
 })
 addLayer("tlg", {
     name: "The Lower Gap", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -123,6 +203,7 @@ addLayer("tlg", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasChallenge('tfird', 11)) mult = mult.times(2)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -144,15 +225,25 @@ addLayer("tlg", {
             content: [
                 "main-display",
                 "prestige-button",
+                "clickables",
                 "blank",
                 ["display-text",
-        function() { return 'You have ' + format(player.points) + ' skill' },
+        function() { return 'You have ' + format(player.tfird.points) + ' The First Difficulty points' },
         { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
                 "blank",
                 "milestones",
                 "blank",
                 "upgrades"
             ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
         },
     },
     milestones: {
@@ -186,7 +277,7 @@ addLayer("n", {
     image: "https://cdn.discordapp.com/attachments/978493156058333195/1094184123213557801/3a.webp",
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: true,
+        unlocked: false,
 		points: new Decimal(0),
     }},
     color: "#aa00ff",
@@ -209,22 +300,32 @@ addLayer("n", {
         {key: "n", description: "N - Reset for Negativity", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     unlocked() {
-        return true
+        if (player['tlg'].points.gte(10)) return true
     },
     layerShown(){
-        return true
+        return player[this.layer].unlocked || player['tlg'].points.gte(10)
     },
     tabFormat: {
         "Main": {
             content: [
                 "main-display",
                 "prestige-button",
+                "clickables",
                 "blank",
                 ["display-text",
-        function() { return 'You have ' + format(player.points) + ' skill' },
+        function() { return 'You have ' + format(player.tlg.points) + ' The Lower Gap points' },
         { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
                 "upgrades"
             ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
         },
     },
     upgrades: {
@@ -232,6 +333,14 @@ addLayer("n", {
             title: "define winning?",
             description: "3x skill gain",
             cost: new Decimal(1)
-        }
+        },
+        12: {
+            title: "the first challenge",
+            description: "unlock the first difficulty challenges",
+            unlocked() {
+                return (hasUpgrade("n", 11))
+            },
+            cost: new Decimal(2)
+        },
     }
 })
