@@ -35,7 +35,12 @@ addLayer("mile", {
             requirementDescription: "1 negativity",
             effectDescription: "keep the first difficulty upgrades on reset",
             done() { return player.n.points.gte(1) }
-        }
+        },
+        1: {
+            requirementDescription: "1 unimpossibility",
+            effectDescription: "keep the lower gap upgrades on reset and get 100% the first difficulty points every second",
+            done() { return player.u.points.gte(1) }
+        },
     },
 })
 addLayer("tfird", {
@@ -102,20 +107,17 @@ addLayer("tfird", {
         if (layers[resettingLayer].row <= this.row) return;
       
         let keep = [];
-        keep.push("challenges");
+        if ((hasMilestone("tlg", 0)) || (hasMilestone("mile", 0))) keep.push("upgrades");
+        keep.push('challenges');
         layerDataReset(this.layer, keep);
     },
-    doReset(resettingLayer) {
-        if (layers[resettingLayer].row <= this.row) return;
-      
-        let keep = [];
-        if ((hasMilestone("tlg", 0)) || (hasMilestone("mile", 0))) keep.push("upgrades");
-        layerDataReset(this.layer, keep);
+    passiveGeneration() {
+        if (hasMilestone('mile', 1)) return 1
     },
     challenges: {
         11: {
             name: "winning is rooted",
-            challengeDescription: "skill gain is divided by 2",
+            challengeDescription: "skill gain is square rooted",
             goalDescription: "1,000 skill",
             rewardDescription: "doubles the lower gap gain",
             canComplete: function() {return player.points.gte(1000)},
@@ -203,6 +205,7 @@ addLayer("tlg", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('n', 13)) mult = mult.times(2)
         if (hasChallenge('tfird', 11)) mult = mult.times(2)
         return mult
     },
@@ -237,6 +240,14 @@ addLayer("tlg", {
             ],
         },
     },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if (hasMilestone("mile", 1)) keep.push("upgrades");
+        keep.push('challenges');
+        layerDataReset(this.layer, keep);
+    },
     clickables: {
         11: {
             title: "Hold to reset",
@@ -269,6 +280,18 @@ addLayer("tlg", {
                 return (hasUpgrade("tlg", 11))
             },
             cost: new Decimal(2)
+        },
+        13: {
+            title: "winning a lot",
+            description: "the lower gap points boosts skill gain",
+            unlocked() {
+                return ((hasUpgrade("tlg", 12)) && (hasUpgrade('n', 12)))
+            },
+            effect() {
+                return (player[this.layer].points).add(1).pow(0.45)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            cost: new Decimal(10)
         },
     },
 })
@@ -336,10 +359,88 @@ addLayer("n", {
         },
         12: {
             title: "the first challenge",
-            description: "unlock the first difficulty challenges",
+            description: "unlock the first difficulty challenges (and unlocks 1 new upgrade to the lower gap)",
             unlocked() {
                 return (hasUpgrade("n", 11))
             },
+            cost: new Decimal(2)
+        },
+        13: {
+            title: "winning, perhaps?",
+            description: "double the lower gap gain",
+            unlocked() {
+                return (hasUpgrade("n", 12))
+            },
+            cost: new Decimal(5)
+        },
+    }
+})
+addLayer("u", {
+    name: "Unimpossible", // This is optional, only used in a few places, If absent it just uses the layer id.
+    image: "https://cdn.discordapp.com/attachments/978493156058333195/1094933234615324742/4a_1.webp",
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#41007d",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Unimpossibility", // Name of prestige currency
+    baseResource: "Negativity", // Name of resource prestige is based on
+    baseAmount() {return player.n.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    branches: ["n", 'u'],
+    hotkeys: [
+        {key: "u", description: "U - Reset for Unimpossibility", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        if (player['n'].points.gte(10)) return true
+    },
+    layerShown(){
+        return player[this.layer].unlocked || player['n'].points.gte(10)
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.n.points) + ' Negativity' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "yeah, i'm winning",
+            description: "5x skill gain",
+            cost: new Decimal(1)
+        },
+        12: {
+            title: "dinner dinner chicken winner",
+            description: "3x negativity gain",
+            unlocked() {return (hasUpgrade('u', 11))},
             cost: new Decimal(2)
         },
     }

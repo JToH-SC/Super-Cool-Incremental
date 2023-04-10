@@ -13,14 +13,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
+	num: "(i wont update this)",
 	name: "JJT'ing",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.1</h3><br>
-		- begun developing<br>
-		- added TFirD layer<br>`
+	<h3>i wont update this</h3>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -44,7 +42,9 @@ function getPointGen() {
 
 	let gain = new Decimal(0)
 	if (hasUpgrade('tfird', 11)) gain = gain.add(1)
+	if (hasUpgrade('u', 11)) gain = gain.times(5)
 	if (hasUpgrade('n', 11)) gain = gain.times(3)
+	if (hasUpgrade('tlg', 13)) gain = gain.times(upgradeEffect('tlg', 13))
 	if (hasUpgrade('tlg', 11)) gain = gain.times(2)
 	if (hasUpgrade('tfird', 23)) gain = gain.times(4)
 	if (hasUpgrade('tfird', 22)) gain = gain.times(upgradeEffect("tfird", 22))
