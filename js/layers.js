@@ -41,6 +41,11 @@ addLayer("mile", {
             effectDescription: "keep the lower gap upgrades on reset and get 100% the first difficulty points every second",
             done() { return player.u.points.gte(1) }
         },
+        2: {
+            requirementDescription: "1 true easiness",
+            effectDescription: "keep the negativity upgrades on reset and get 100% the lower gap points every second",
+            done() { return player.t.points.gte(1) }
+        },
     },
 })
 addLayer("tfird", {
@@ -120,6 +125,14 @@ addLayer("tfird", {
             challengeDescription: "skill gain is square rooted",
             goalDescription: "1,000 skill",
             rewardDescription: "doubles the lower gap gain",
+            canComplete: function() {return player.points.gte(1000)},
+        },
+        12: {
+            name: "four roots?!",
+            challengeDescription: "skill gain is four rooted",
+            goalDescription: "1,000 skill",
+            rewardDescription: "triples the negativity gain",
+            unlocked() {return (hasUpgrade('n', 22))},
             canComplete: function() {return player.points.gte(1000)},
         },
     },
@@ -205,7 +218,8 @@ addLayer("tlg", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('n', 13)) mult = mult.times(2)
+        if (hasUpgrade('n', 21)) mult = mult.times(2)
+        if (hasUpgrade('n', 13)) mult = mult.times(4)
         if (hasChallenge('tfird', 11)) mult = mult.times(2)
         return mult
     },
@@ -239,6 +253,9 @@ addLayer("tlg", {
                 "upgrades"
             ],
         },
+    },
+    passiveGeneration() {
+        if (hasMilestone('mile', 2)) return 1
     },
     doReset(resettingLayer) {
         if (layers[resettingLayer].row <= this.row) return;
@@ -312,6 +329,9 @@ addLayer("n", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade("t", 12)) mult = mult.times(3)
+        if (hasChallenge("tfird", 12)) mult = mult.times(3)
+        if (hasUpgrade("u", 12)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -342,6 +362,14 @@ addLayer("n", {
             ],
         },
     },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return;
+      
+        let keep = [];
+        if (hasMilestone("mile", 2)) keep.push("upgrades");
+        keep.push('challenges');
+        layerDataReset(this.layer, keep);
+    },
     clickables: {
         11: {
             title: "Hold to reset",
@@ -358,7 +386,7 @@ addLayer("n", {
             cost: new Decimal(1)
         },
         12: {
-            title: "the first challenge",
+            title: "winning but more challenging",
             description: "unlock the first difficulty challenges (and unlocks 1 new upgrade to the lower gap)",
             unlocked() {
                 return (hasUpgrade("n", 11))
@@ -367,18 +395,42 @@ addLayer("n", {
         },
         13: {
             title: "winning, perhaps?",
-            description: "double the lower gap gain",
+            description: "4x the lower gap points gain",
             unlocked() {
                 return (hasUpgrade("n", 12))
             },
             cost: new Decimal(5)
+        },
+        21: {
+            title: "epicly winning",
+            description: "2x the lower gap points gain",
+            unlocked() {
+                return ((hasUpgrade("n", 13)) && (hasUpgrade('u', 13)))
+            },
+            cost: new Decimal(25)
+        },
+        22: {
+            title: "winner challenging",
+            description: "unlock a new the first difficulty challenge",
+            unlocked() {
+                return ((hasUpgrade("n", 21)) && (hasUpgrade('u', 13)))
+            },
+            cost: new Decimal(40)
+        },
+        23: {
+            title: "WINNIng vs gaming",
+            description: "x4 unimpossibility gain",
+            unlocked() {
+                return ((hasUpgrade("n", 22)) && (hasUpgrade('u', 13)))
+            },
+            cost: new Decimal(100)
         },
     }
 })
 addLayer("u", {
     name: "Unimpossible", // This is optional, only used in a few places, If absent it just uses the layer id.
     image: "https://cdn.discordapp.com/attachments/978493156058333195/1094933234615324742/4a_1.webp",
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
@@ -392,6 +444,8 @@ addLayer("u", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade("t", 11)) mult = mult.times(5)
+        if (hasUpgrade("n", 23)) mult = mult.times(4)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -442,6 +496,484 @@ addLayer("u", {
             description: "3x negativity gain",
             unlocked() {return (hasUpgrade('u', 11))},
             cost: new Decimal(2)
+        },
+        13: {
+            title: "winning+",
+            description: "unlock a new row of negativity upgrades",
+            unlocked() {return (hasUpgrade('u', 12))},
+            cost: new Decimal(3)
+        },
+    }
+})
+addLayer("t", {
+    name: "True Ease", // This is optional, only used in a few places, If absent it just uses the layer id.
+    image: "https://cdn.discordapp.com/attachments/978493156058333195/1095294519571922984/5a.webp",
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#ffffff",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "True Easiness", // Name of prestige currency
+    baseResource: "Unimpossibility", // Name of resource prestige is based on
+    baseAmount() {return player.u.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        if (hasUpgrade('red', 11)) mult = mult.times(3)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 4, // Row the layer is in on the tree (0 is the first row)
+    branches: ["u", 't'],
+    hotkeys: [
+        {key: "v", description: "V - Reset for True Easiness", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        if (player['u'].points.gte(10)) return true
+    },
+    layerShown(){
+        return player[this.layer].unlocked || player['u'].points.gte(10)
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.u.points) + ' Unimpossibility' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having an existence rank of Quadratic omega level numbers and below their negatives will cause you to lose",
+            description: "5x unimpossibility gain",
+            cost: new Decimal(1),
+        },
+        12: {
+            title: "Wait 95 Planck time",
+            description: "3x negativity gain",
+            unlocked() {return (hasUpgrade('t', 11))},
+            cost: new Decimal(3),
+        },
+        13: {
+            title: "Wait 100 Planck time",
+            description: "unlock color powers",
+            unlocked() {return (hasUpgrade('t', 12))},
+            cost: new Decimal(6),
+        },
+    }
+})
+addLayer("red", {
+    name: "Red", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "R",
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#ff0000",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Red power", // Name of prestige currency
+    baseResource: "True Easiness", // Name of resource prestige is based on
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    branches: ["t", 'red'],
+    hotkeys: [
+        {key: "r", description: "R - Reset for Red Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return (hasUpgrade('t', 13))
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade('t', 13))
+    },
+    increaseUnlockOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.t.points) + ' True Easiness' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having a red object in the entire omniverse",
+            description: "3x true easiness gain",
+            cost: new Decimal(1),
+        },
+    }
+})
+addLayer("orange", {
+    name: "Orange", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "O",
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        unlockOrder: 1,
+    }},
+    color: "#ff9900",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Orange power", // Name of prestige currency
+    baseResource: "True Easiness", // Name of resource prestige is based on
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    branches: ["t", 'orange'],
+    hotkeys: [
+        {key: "o", description: "O - Reset for Orange Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return (hasUpgrade('t', 13))
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade('t', 13))
+    },
+    increaseUnlockOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.t.points) + ' True Easiness' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having an orange object in the entire omniverse",
+            description: "5x unimpossibility gain",
+            cost: new Decimal(1),
+        },
+    }
+})
+addLayer("yellow", {
+    name: "Yellow", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "Y",
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        unlockOrder: 1,
+    }},
+    color: "#ffff00",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Yellow power", // Name of prestige currency
+    baseResource: "True Easiness", // Name of resource prestige is based on
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    branches: ["t", 'yellow'],
+    hotkeys: [
+        {key: "Y", description: "Y - Reset for Yellow Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return (hasUpgrade('t', 13))
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade('t', 13))
+    },
+    increaseUnlockOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.t.points) + ' True Easiness' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having a yellow object in the entire omniverse",
+            description: "5x unimpossibility gain",
+            cost: new Decimal(1),
+        },
+    }
+})
+addLayer("green", {
+    name: "Green", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "G",
+    position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        unlockOrder: 1,
+    }},
+    color: "#00ff00",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Green power", // Name of prestige currency
+    baseResource: "True Easiness", // Name of resource prestige is based on
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    branches: ["t", 'green'],
+    hotkeys: [
+        {key: "G", description: "G - Reset for Green Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return (hasUpgrade('t', 13))
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade('t', 13))
+    },
+    increaseUnlockOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.t.points) + ' True Easiness' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having a green object in the entire omniverse",
+            description: "5x unimpossibility gain",
+            cost: new Decimal(1),
+        },
+    }
+})
+addLayer("blue", {
+    name: "Blue", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "B",
+    position: 4, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        unlockOrder: 1,
+    }},
+    color: "#0000ff",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Blue power", // Name of prestige currency
+    baseResource: "True Easiness", // Name of resource prestige is based on
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    branches: ["t", 'blue'],
+    hotkeys: [
+        {key: "B", description: "B - Reset for Blue Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return (hasUpgrade('t', 13))
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade('t', 13))
+    },
+    increaseUnlockOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.t.points) + ' True Easiness' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having a blue object in the entire omniverse",
+            description: "5x unimpossibility gain",
+            cost: new Decimal(1),
+        },
+    }
+})
+addLayer("purple", {
+    name: "Purple", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "P",
+    position: 5, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        unlockOrder: 1,
+    }},
+    color: "#9900ff",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Blue power", // Name of prestige currency
+    baseResource: "True Easiness", // Name of resource prestige is based on
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    branches: ["t", 'purple'],
+    hotkeys: [
+        {key: "P", description: "P - Reset for Purple Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        return (hasUpgrade('t', 13))
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade('t', 13))
+    },
+    increaseUnlockOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                ["display-text",
+        function() { return 'You have ' + format(player.t.points) + ' True Easiness' },
+        { "color": "white", "font-size": "16px", "font-family": "Lucida Console" }],
+                "upgrades"
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Hold to reset",
+            display: "(Mobile QoL)",
+            onClick() {if(canReset(this.layer)) doReset(this.layer)},
+            onHold() {if(canReset(this.layer)) doReset(this.layer)},
+            canClick() {return true},
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Having a purple object in the entire omniverse",
+            description: "5x unimpossibility gain",
+            cost: new Decimal(1),
         },
     }
 })

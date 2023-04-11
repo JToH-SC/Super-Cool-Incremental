@@ -52,6 +52,7 @@ function getPointGen() {
 	if (hasUpgrade('tfird', 13)) gain = gain.times(3)
 	if (hasUpgrade('tfird', 12)) gain = gain.times(2)
 	if (inChallenge('tfird', 11)) gain = gain.pow(1/2)
+	if (inChallenge('tfird', 12)) gain = gain.pow(1/4)
 	return gain
 }
 
