@@ -65,6 +65,9 @@ addLayer("tfird", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (inChallenge('tlg', 11)) mult = mult.pow(1/5)
+        if (hasUpgrade('tlg', 22)) mult = mult.times(3)
+        if (hasUpgrade('orange', 12)) mult = mult.times(15)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -133,6 +136,14 @@ addLayer("tfird", {
             goalDescription: "1,000 skill",
             rewardDescription: "triples the negativity gain",
             unlocked() {return (hasUpgrade('n', 22))},
+            canComplete: function() {return player.points.gte(1000)},
+        },
+        21: {
+            name: "seven rooter",
+            challengeDescription: "skill gain is seven rooted",
+            goalDescription: "1,000 skill",
+            rewardDescription: "4x unimpossibility gain",
+            unlocked() {return (hasUpgrade('green', 13))},
             canComplete: function() {return player.points.gte(1000)},
         },
     },
@@ -218,6 +229,7 @@ addLayer("tlg", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('orange', 11)) mult = mult.times(8)
         if (hasUpgrade('n', 21)) mult = mult.times(2)
         if (hasUpgrade('n', 13)) mult = mult.times(4)
         if (hasChallenge('tfird', 11)) mult = mult.times(2)
@@ -253,6 +265,16 @@ addLayer("tlg", {
                 "upgrades"
             ],
         },
+        "Challenges": {
+            unlocked() {return (hasUpgrade('green', 11))},
+            content: [
+                "main-display",
+                "prestige-button",
+                "clickables",
+                "blank",
+                "challenges",
+            ]
+        }
     },
     passiveGeneration() {
         if (hasMilestone('mile', 2)) return 1
@@ -264,6 +286,15 @@ addLayer("tlg", {
         if (hasMilestone("mile", 1)) keep.push("upgrades");
         keep.push('challenges');
         layerDataReset(this.layer, keep);
+    },
+    challenges: {
+        11: {
+            name: "the first difficulty has root",
+            challengeDescription: "the first difficulty point gain is five rooted",
+            goalDescription: "10,000,000 the first difficulty points",
+            rewardDescription: "triples true easiness gain",
+            canComplete: function() {return player.tfird.points.gte(10000000)},
+        }
     },
     clickables: {
         11: {
@@ -310,6 +341,30 @@ addLayer("tlg", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             cost: new Decimal(10)
         },
+        21: {
+            title: "winner winenr chick din",
+            description: "double negativity gain",
+            unlocked() {
+                return ((hasUpgrade("tlg", 13)) && (hasUpgrade('green', 12)))
+            },
+            cost: new Decimal(100000)
+        },
+        22: {
+            title: "winning, why?",
+            description: "triple the first difficulty point gain",
+            unlocked() {
+                return ((hasUpgrade("tlg", 21)) && (hasUpgrade('green', 12)))
+            },
+            cost: new Decimal(1000000)
+        },
+        23: {
+            title: "im tired of winning",
+            description: "4x true easiness gain",
+            unlocked() {
+                return ((hasUpgrade("tlg", 22)) && (hasUpgrade('green', 12)))
+            },
+            cost: new Decimal(25000000)
+        },
     },
 })
 addLayer("n", {
@@ -329,6 +384,9 @@ addLayer("n", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade("tlg", 21)) mult = mult.times(2)
+        if (hasUpgrade("yellow", 11)) mult = mult.times(upgradeEffect('yellow', 11))
+        if (hasUpgrade("red", 13)) mult = mult.times(5)
         if (hasUpgrade("t", 12)) mult = mult.times(3)
         if (hasChallenge("tfird", 12)) mult = mult.times(3)
         if (hasUpgrade("u", 12)) mult = mult.times(3)
@@ -444,6 +502,10 @@ addLayer("u", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasChallenge("purple", 13)) mult = mult.times(10)
+        if (hasChallenge("tfird", 21)) mult = mult.times(4)
+        if (hasUpgrade("yellow", 13)) mult = mult.times(upgradeEffect('yellow', 13))
+        if (hasUpgrade("red", 12)) mult = mult.times(4)
         if (hasUpgrade("t", 11)) mult = mult.times(5)
         if (hasUpgrade("n", 23)) mult = mult.times(4)
         return mult
@@ -522,6 +584,9 @@ addLayer("t", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('tlg', 23)) mult = mult.times(3)
+        if (hasChallenge('tlg', 11)) mult = mult.times(3)
+        if (hasUpgrade("yellow", 12)) mult = mult.times(upgradeEffect('yellow', 12))
         if (hasUpgrade('red', 11)) mult = mult.times(3)
         return mult
     },
@@ -599,6 +664,7 @@ addLayer("red", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('blue', 11)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -645,6 +711,18 @@ addLayer("red", {
             description: "3x true easiness gain",
             cost: new Decimal(1),
         },
+        12: {
+            title: "Having two red objects in the entire omniverse",
+            description: "4x unimpossiblity gain",
+            unlocked() {return (hasUpgrade('red', 11))},
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Having three red objects in the entire omniverse",
+            description: "5x negativity gain",
+            unlocked() {return (hasUpgrade('red', 12))},
+            cost: new Decimal(5),
+        },
     }
 })
 addLayer("orange", {
@@ -665,6 +743,7 @@ addLayer("orange", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('blue', 12)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -708,8 +787,20 @@ addLayer("orange", {
     upgrades: {
         11: {
             title: "Having an orange object in the entire omniverse",
-            description: "5x unimpossibility gain",
+            description: "8x the lower gap point gain",
             cost: new Decimal(1),
+        },
+        12: {
+            title: "Having two orange objects in the entire omniverse",
+            description: "15x the first difficulty point gain",
+            unlocked() {return (hasUpgrade('orange', 11))},
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Having three orange objects in the entire omniverse",
+            description: "35x skill gain",
+            unlocked() {return (hasUpgrade('orange', 12))},
+            cost: new Decimal(5),
         },
     }
 })
@@ -731,6 +822,7 @@ addLayer("yellow", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('blue', 11)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -774,8 +866,32 @@ addLayer("yellow", {
     upgrades: {
         11: {
             title: "Having a yellow object in the entire omniverse",
-            description: "5x unimpossibility gain",
+            description: "true easiness boosts negativity gain",
+            effect() {
+                return (player.t.points).add(1).pow(0.55)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             cost: new Decimal(1),
+        },
+        12: {
+            title: "Having two yellow objects in the entire omniverse",
+            description: "yellow power boosts negativity gain",
+            unlocked() {return (hasUpgrade('yellow', 11))},
+            effect() {
+                return (player[this.layer].points).add(1).pow(0.75)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Having three yellow objects in the entire omniverse",
+            description: "skill boosts unimpossibility gain",
+            unlocked() {return (hasUpgrade('yellow', 12))},
+            effect() {
+                return (player.points).add(1).pow(0.08)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            cost: new Decimal(5),
         },
     }
 })
@@ -797,6 +913,7 @@ addLayer("green", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('blue', 12)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -840,8 +957,20 @@ addLayer("green", {
     upgrades: {
         11: {
             title: "Having a green object in the entire omniverse",
-            description: "5x unimpossibility gain",
+            description: "unlocks a new challenge in the lower gap",
             cost: new Decimal(1),
+        },
+        12: {
+            title: "Having two green objects in the entire omniverse",
+            description: "unlock a new row of upgrades in the lower gap",
+            unlocked() {return (hasUpgrade('green', 11))},
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Having three green objects in the entire omniverse",
+            description: "unlocks a new challenge in the first difficulty",
+            unlocked() {return (hasUpgrade('green', 12))},
+            cost: new Decimal(5),
         },
     }
 })
@@ -863,6 +992,7 @@ addLayer("blue", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('blue', 13)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -906,8 +1036,20 @@ addLayer("blue", {
     upgrades: {
         11: {
             title: "Having a blue object in the entire omniverse",
-            description: "5x unimpossibility gain",
+            description: "triples red and yellow power gain",
             cost: new Decimal(1),
+        },
+        12: {
+            title: "Having two blue objects in the entire omniverse",
+            description: "triples orange and green power gain",
+            unlocked() {return (hasUpgrade('blue', 11))},
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Having three blue objects in the entire omniverse",
+            description: "triples blue and purple power gain",
+            unlocked() {return (hasUpgrade('blue', 12))},
+            cost: new Decimal(5),
         },
     }
 })
@@ -922,13 +1064,14 @@ addLayer("purple", {
     }},
     color: "#9900ff",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
-    resource: "Blue power", // Name of prestige currency
+    resource: "Purple power", // Name of prestige currency
     baseResource: "True Easiness", // Name of resource prestige is based on
     baseAmount() {return player.t.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('blue', 13)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -972,8 +1115,20 @@ addLayer("purple", {
     upgrades: {
         11: {
             title: "Having a purple object in the entire omniverse",
-            description: "5x unimpossibility gain",
+            description: "does nothing",
             cost: new Decimal(1),
+        },
+        12: {
+            title: "Having two purple objects in the entire omniverse",
+            description: "does nothing",
+            unlocked() {return (hasUpgrade('purple', 11))},
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Having three purple objects in the entire omniverse",
+            description: "10x unimpossibility gain",
+            unlocked() {return (hasUpgrade('purple', 12))},
+            cost: new Decimal(5),
         },
     }
 })

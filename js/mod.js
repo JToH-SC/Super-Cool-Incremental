@@ -42,6 +42,7 @@ function getPointGen() {
 
 	let gain = new Decimal(0)
 	if (hasUpgrade('tfird', 11)) gain = gain.add(1)
+	if (hasUpgrade('orange', 13)) gain = gain.times(35)
 	if (hasUpgrade('u', 11)) gain = gain.times(5)
 	if (hasUpgrade('n', 11)) gain = gain.times(3)
 	if (hasUpgrade('tlg', 13)) gain = gain.times(upgradeEffect('tlg', 13))
@@ -53,6 +54,7 @@ function getPointGen() {
 	if (hasUpgrade('tfird', 12)) gain = gain.times(2)
 	if (inChallenge('tfird', 11)) gain = gain.pow(1/2)
 	if (inChallenge('tfird', 12)) gain = gain.pow(1/4)
+	if (inChallenge('tfird', 21)) gain = gain.pow(1/7)
 	return gain
 }
 
