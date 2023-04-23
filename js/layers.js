@@ -109,7 +109,7 @@ addLayer("s", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('s+', 11)) mult = mult.times(2)
+        if (hasUpgrade('s+', 11)) mult = mult.times(4)
         if (hasUpgrade('s', 12)) mult = mult.times(2)
         return mult
     },
@@ -168,8 +168,11 @@ addLayer("s", {
             name: "Minimal Upgrades",
             challengeDescription: "Point gain is halved for every upgrade you have.",
             rewardDescription: "Point gain is tripled for every milestone unlocked.",
-            canComplete: function() {return player.points.gte(100)},
-            completionLimit: 3,
+            goalDescription: "50 points",
+            rewardEffect() {
+                return (new Decimal(Object.keys(layers).reduce((accumulated, current) => accumulated + player[current].upgrades.length, 0))).add(2)
+            },
+            canComplete: function() {return player.points.gte(50)},
         },
     },
     milestones: {
@@ -406,7 +409,8 @@ addLayer("s+", {
         return new Decimal(1)
     },
     branches: ["s", "s+"],
-    row: 0, // Row the layer is in on the tree (0 is the first row)
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    displayRow: 0,
     hotkeys: [
         {key: "shift+s", description: "Shift+S: Reset for super+ points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
@@ -419,15 +423,15 @@ addLayer("s+", {
     upgrades: {
         11: {
             title: "Old Start!",
-            description: "Double super point gain.",
+            description: "4x super point gain.",
             cost: new Decimal(1),
             tooltip: "*2 to super points",
         },
         12: {
             title: "A Super Challenge",
             description: "Unlock Super Challenges.",
-            cost: new Decimal(4),
-            tooltip: "*unlock a challenge sub-tab in super layer",
+            cost: new Decimal(2),
+            tooltip: "unlock a challenge sub-tab in super layer",
         },
     },
 })

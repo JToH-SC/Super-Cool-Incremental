@@ -22,6 +22,9 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v2.2.0</h3><br>
+	- Finally finished the first Super Challenge.<br>
+	- Super+ resets all layers before it.<br>
 	<h3>v2.1.0</h3><br>
 	- Added some sub-tabs for Super.<br>
 	- Added 5 more achievements.<br>
@@ -96,6 +99,8 @@ function getPointGen() {
 	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
 	if (hasUpgrade('s', 13)) gain = gain.times(3)
 	if (hasUpgrade('s', 11)) gain = gain.times(2)
+	if (inChallenge('s', 11)) gain = gain.divide(new Decimal(Object.keys(layers).reduce((accumulated, current) => accumulated + player[current].upgrades.length, 0)))
+	if (hasChallenge('s', 11)) gain = gain.times(challengeEffect('s', 11))
 	return gain
 }
 
