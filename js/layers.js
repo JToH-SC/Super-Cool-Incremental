@@ -109,6 +109,7 @@ addLayer("s", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('u', 11)) mult = mult.times(3)
         if (hasUpgrade('s+', 11)) mult = mult.times(4)
         if (hasUpgrade('s', 12)) mult = mult.times(2)
         return mult
@@ -125,6 +126,7 @@ addLayer("s", {
       
         let keep = [];
         if (hasMilestone("d", 0)) keep.push("upgrades");
+        keep.push("challenges");
         layerDataReset(this.layer, keep);
       },
     passiveGeneration() {
@@ -167,10 +169,10 @@ addLayer("s", {
         11: {
             name: "Minimal Upgrades",
             challengeDescription: "Point gain is halved for every upgrade you have.",
-            rewardDescription: "Point gain is tripled for every milestone unlocked.",
+            rewardDescription: "Point gain is tripled for every milestone unlocked. (AND unlocks a new upgrade in the Super+ layer)",
             goalDescription: "50 points",
             rewardEffect() {
-                return (new Decimal(Object.keys(layers).reduce((accumulated, current) => accumulated + player[current].upgrades.length, 0))).add(2)
+                return (new Decimal(Object.keys(layers).reduce((accumulated, current) => accumulated + player[current].upgrades.length, 0)))
             },
             canComplete: function() {return player.points.gte(50)},
         },
@@ -254,6 +256,8 @@ addLayer("d", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('d', 21)) mult = mult.times(2.5)
+        if (hasUpgrade('u', 11)) mult = mult.times(2)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -312,6 +316,20 @@ addLayer("d", {
             unlocked() {if (hasUpgrade("d", 12)) return true},
             tooltip: "unlock a new layer",
         },
+        21: {
+            title: "Upgrade Title",
+            description: "2.5x Duper Point gain",
+            cost: new Decimal(75),
+            unlocked() {if (hasUpgrade("u", 12)) return true},
+            tooltip: "*2.5 duper points",
+        },
+        22: {
+            title: "Ideas = None",
+            description: "Unlock 1 more upgrade in Super+ layer.",
+            cost: new Decimal(350),
+            unlocked() {if (hasUpgrade("d", 21)) return true},
+            tooltip: "unlocks a new upgrade to Super+",
+        },
     },
 })
 addLayer("m", {
@@ -369,7 +387,7 @@ addLayer("m", {
             tooltip: "duper points+1^0.25 * points",
             unlocked() {
             if (hasUpgrade("m", 11)) return true
-        },
+            },
             effect() {
                 return player["d"].points.add(1).pow(0.25)
             },
@@ -431,7 +449,78 @@ addLayer("s+", {
             title: "A Super Challenge",
             description: "Unlock Super Challenges.",
             cost: new Decimal(2),
+            unlocked() {
+                if (hasUpgrade("s+", 11)) return true
+            },
             tooltip: "unlock a challenge sub-tab in super layer",
+        },
+        13: {
+            title: "Ultra!",
+            description: "Unlock a new layer!",
+            cost: new Decimal(5),
+            unlocked() {
+                if (hasChallenge("s", 11)) return true
+            },
+            tooltip: "unlock a challenge sub-tab in super layer",
+        },
+        21: {
+            title: "I Will Implement This Upgrade Later",
+            description: "title",
+            cost: new Decimal(10),
+            unlocked() {if (hasUpgrade("d", 22)) return true},
+            tooltip: "unlock a new layer",
+        },
+    },
+},
+)
+addLayer("u", {
+    name: "ultra", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "U", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#00ff00",
+    requires: new Decimal(100000), // Can be a function that takes requirement increases into account
+    resource: "ultra points", // Name of prestige currency
+    baseResource: "points", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    branches: ["m"],
+    row: 4, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "U", description: "U: Reset for ultra points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    unlocked() {
+        if (hasUpgrade("s+", 13)) return true
+    },
+    layerShown(){
+        return player[this.layer].unlocked || (hasUpgrade("s+", 13))
+    },
+    upgrades: {
+        11: {
+            title: "A Boosty!",
+            description: "3x point gain, 3x super point gain and x2 duper point gain.",
+            cost: new Decimal(1),
+            tooltip: "*3 points, *3 super points. *2 duper points",
+        },
+        12: {
+            title: "Content-Adder 4000",
+            description: "Unlocks 2 new upgrades in Duper.",
+            cost: new Decimal(2),
+            unlocked() {
+                if (hasUpgrade("u", 11)) return true
+            },
+            tooltip: "unlocks 2 new upgrades to Duper",
         },
     },
 })

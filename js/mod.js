@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.2.0",
-	name: "It's Like A Hiatus",
+	num: "2.3.0",
+	name: "Ultra Spoiling Layers",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,6 +22,11 @@ let changelog = `<h1>Changelog:</h1><br>
 	A stands for LARGE updates.<br>
 	B stands for content updates.<br>
 	C stands for very small updates.<br>
+	<h3>v2.3.0</h3><br>
+	- Added an unfinished upgrade to Super+.<br>
+	- Added a new layer, Ultra.<br>
+	- Added 2 upgrades to Ultra.<br>
+		- Added 2 upgrades to Duper.<br>
 	<h3>v2.2.0</h3><br>
 	- Finally finished the first Super Challenge.<br>
 	- Super+ resets all layers before it.<br>
@@ -92,15 +97,16 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade('u', 11)) gain = gain.times(3)
 	if (hasUpgrade('m', 12)) gain = gain.times(upgradeEffect('m', 12))
 	if (hasUpgrade('m', 11)) gain = gain.times(3)
 	if (hasUpgrade('d', 11)) gain = gain.times(2)
+	if (hasChallenge('s', 11)) gain = gain.times(challengeEffect('s', 11))
 	if (hasUpgrade('s', 22)) gain = gain.times(upgradeEffect('s', 22))
 	if (hasUpgrade('s', 21)) gain = gain.times(upgradeEffect('s', 21))
 	if (hasUpgrade('s', 13)) gain = gain.times(3)
 	if (hasUpgrade('s', 11)) gain = gain.times(2)
 	if (inChallenge('s', 11)) gain = gain.divide(new Decimal(Object.keys(layers).reduce((accumulated, current) => accumulated + player[current].upgrades.length, 0)))
-	if (hasChallenge('s', 11)) gain = gain.times(challengeEffect('s', 11))
 	return gain
 }
 
