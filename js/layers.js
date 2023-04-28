@@ -296,7 +296,7 @@ addLayer("k", {
     color: "#B66EFF",
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(200000)
+        else return new Decimal(500000)
     }, // Can be a function that takes requirement increases into account
     resource: "knowledge points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
