@@ -21,7 +21,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.1</h3><br>
 		- Game is created.<br>
 		- Added three layers, "Power", "Intensity", and "Control".<br>
-		- Added 6 upgrades to "Power".<br>
+		- Added 7 upgrades to "Power".<br>
 		- Added 6 upgrades to "Intensity".<br>
 		- Added 6 upgrades to "Control".`
 
