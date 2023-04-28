@@ -1,35 +1,29 @@
 let modInfo = {
-	name: "Super Cool Incremental",
-	id: "JTSCIJT",
-	author: "jToH_SC",
+	name: "Ascension Tree",
+	id: "ATJTAT",
+	author: "JToH_SC, inspired by The Tree of Life (by pg132), The Prestreestuck (by ducdat0507), and Incremental God Tree (by Icecreamdude).",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 0,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
-	name: "Fixing The Stuff I Made",
+	num: "0.1",
+	name: "Early Early Chapter 1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.3</h3><br>
-		- Fixed stuuufff~~~<br>
-		- Buffed super point requirement.<br>
-		- Added a new upgrade.<br>
-		- Still learning about code.<br>
-	<h3>v0.2</h3><br>
-		- Added a new layer.<br>
-		- Added 3 upgrades.<br>
-		- Still learning about code.<br>
 	<h3>v0.1</h3><br>
 		- Game is created.<br>
-		- Learning about code.`
+		- Added three layers, "Power", "Intensity", and "Control".<br>
+		- Added 6 upgrades to "Power".<br>
+		- Added 6 upgrades to "Intensity".<br>
+		- Added 6 upgrades to "Control".`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -52,8 +46,16 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade('p', 11)) gain = gain.times(2)
-	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
+	if (hasUpgrade('c', 23)) gain = gain.times(upgradeEffect('c', 23))
+	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
+	if (hasUpgrade('c', 12)) gain = gain.times(2)
+	if (hasUpgrade('i', 23)) gain = gain.times(upgradeEffect('i', 23))
+	if (hasUpgrade('i', 22)) gain = gain.times(2.5)
+	if (hasUpgrade('i', 13)) gain = gain.times(upgradeEffect('i', 13))
+	if (hasUpgrade('i', 11)) gain = gain.times(2.25)
+	if (hasUpgrade('p', 22)) gain = gain.times(2.25)
+	if (hasUpgrade('p', 13)) gain = gain.times(1.75)
+	if (hasUpgrade('p', 11)) gain = gain.times(1.5)
 	return gain
 }
 
