@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "Ascension Tree",
+	name: "Abstract Tree",
 	id: "ATJTAT",
 	author: "JToH_SC, inspired by The Tree of Life (by pg132), The Prestreestuck (by ducdat0507), and Incremental God Tree (by Icecreamdude).",
 	pointsName: "points",
