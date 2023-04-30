@@ -27,10 +27,53 @@ addLayer("p", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'You have ' + format(player.points) + ' points' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                "blank",
+                "upgrades"
+            ],
+        },
+        "Buyables": {
+            unlocked() {
+                return (hasUpgrade('k', 11))
+            },
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'You have ' + format(player.points) + ' points' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                "blank",
+                "buyables"
+            ],
+        },
+    },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "p", description: "P: Reset for power points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+    buyables: {
+        11: {
+            cost(x) { return new Decimal(100).mul(x) },
+            title: "Power Buyable 1",
+            display() { return "Doubles point gain.<br> Level " + format(getBuyableAmount('p', 11)) + ".<br> Cost: "},
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+    },
     upgrades: {
         11: {
             title: "Power 1",
@@ -250,7 +293,7 @@ addLayer("c", {
             description: "Points boosts Points.",
             cost: new Decimal(5),
             effect() {
-                return player.points.add(1).pow(0.1)
+                return player.points.add(1).pow(0.15)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
@@ -292,6 +335,7 @@ addLayer("k", {
         unlocked: false,
 		points: new Decimal(0),
         unlockOrder: 0,
+        best: new Decimal(0),
     }},
     color: "#B66EFF",
     requires() {
@@ -304,6 +348,12 @@ addLayer("k", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
+    effect() {
+        return new Decimal(player[this.layer].best).add(1).pow(1.5)
+    },
+    effectDescription() {
+        return "which multiplies point gain by " + ("h2", "k", format(tmp.k.effect)) + "*."
+    },
     gainMult() {
         let mult = new Decimal(1)
         return mult
@@ -322,8 +372,8 @@ addLayer("k", {
     upgrades: {
         11: {
             title: "Knowledge 1",
-            description: "adding later",
-            cost: new Decimal(1),
+            description: "Unlocks Power Buyables.",
+            cost: new Decimal(5),
         },
         12: {
             title: "Knowledge 2",

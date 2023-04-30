@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Early Early Chapter 1",
+	num: "0.2",
+	name: "Early Early-Mid Chapter 1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.2</h3><br>
+		- Added four layers, "Knowledge", "Practice", "Wisdom", and "Learning".<br>
+		- Added a layer effect to "Knowledge".<br>
 	<h3>v0.1</h3><br>
 		- Game is created.<br>
 		- Added three layers, "Power", "Intensity", and "Control".<br>
@@ -46,6 +49,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (player.k.unlocked) gain = gain.times(tmp.k.effect)
 	if (hasUpgrade('c', 23)) gain = gain.times(upgradeEffect('c', 23))
 	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
 	if (hasUpgrade('c', 12)) gain = gain.times(2)
