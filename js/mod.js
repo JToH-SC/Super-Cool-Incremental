@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "Super Cool Incremental",
-	id: "JTSCIJT",
+	name: "tree: universal",
+	id: "JTTUTUJT",
 	author: "jToH_SC",
-	pointsName: "points",
+	pointsName: "matter",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -13,23 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
+	num: "0.1",
 	name: "Fixing The Stuff I Made",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.3</h3><br>
-		- Fixed stuuufff~~~<br>
-		- Buffed super point requirement.<br>
-		- Added a new upgrade.<br>
-		- Still learning about code.<br>
-	<h3>v0.2</h3><br>
-		- Added a new layer.<br>
-		- Added 3 upgrades.<br>
-		- Still learning about code.<br>
 	<h3>v0.1</h3><br>
 		- Game is created.<br>
-		- Learning about code.`
+		- Created the first layer, "Quantum.".`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -51,9 +42,9 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
-	if (hasUpgrade('p', 11)) gain = gain.times(2)
-	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
+	let gain = new Decimal(0)
+	if (hasUpgrade('q', 11)) gain = gain.add(1)
+	if (hasUpgrade('q', 12)) gain = gain.times(2)
 	return gain
 }
 
