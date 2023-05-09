@@ -21,7 +21,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.21</h3><br>
 		- Added 3 new layers, "Knowledge", "Practice", and "Wisdom".<br>
 		- Added a layer effect to "Knowledge".<br>
-		- Added ? upgrades to Knowledge.<br>
+		- Added 4 upgrades to Knowledge.<br>
 		- Added Power Buyables.<br>
 		- Added Intensity Challenges.<br>
 		- Added Sub-Control.<br>
