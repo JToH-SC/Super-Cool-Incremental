@@ -219,7 +219,7 @@ addLayer("i", {
         11: {
             name: "Intensity Challenge 1",
             challengeDescription: "Divides point gain by 3.<br> Reward: Knowledge Points boosts Power Points.",
-            rewardDescription: "5e9 points",
+            goalDescription: "5e9 points",
             rewardEffect() {
                 return player.k.points.add(1).pow(0.75)
             },
