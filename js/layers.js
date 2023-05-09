@@ -525,7 +525,7 @@ addLayer("pr", {
     color: "#B5DA44",
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(3e23)
+        else return new Decimal(2e37)
     }, // Can be a function that takes requirement increases into account
     resource: "practice points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
@@ -585,7 +585,7 @@ addLayer("w", {
     color: "#F9C3FF",
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(3e23)
+        else return new Decimal(2e37)
     }, // Can be a function that takes requirement increases into account
     resource: "wisdom points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
