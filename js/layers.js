@@ -325,11 +325,11 @@ addLayer("c", {
     unlocked() {
         return hasUpgrade('p', 23)
     },
-    effectDescription: function(){if (hasUpgrade('k', 13)) return " which gives " + format(new Decimal.pow(1.01,player.c.points)) + " Sub-Control every second." },
+    effectDescription: function(){if (hasUpgrade('k', 13)) return " which gives " + format(new Decimal.pow(1.0001,player.c.points)) + " Sub-Control every second." },
     update(diff) {
         let gain = new Decimal(0)
         if (hasUpgrade('k', 13)){
-        gain = new Decimal.pow(1.01,player.c.points)
+        gain = new Decimal.pow(1.0001,player.c.points)
         }
         player.c.subControl = player.c.subControl.add(gain.times(diff));
     },
