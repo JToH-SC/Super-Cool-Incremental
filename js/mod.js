@@ -13,14 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "Early Early-Mid Chapter 1",
+	num: "0.21",
+	name: "Early Early-Mid Chapter 1: Part 1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.2</h3><br>
-		- Added four layers, "Knowledge", "Practice", "Wisdom", and "Learning".<br>
+	<h3>v0.21</h3><br>
+		- Added 3 new layers, "Knowledge", "Practice", and "Wisdom".<br>
 		- Added a layer effect to "Knowledge".<br>
+		- Added ? upgrades to Knowledge.<br>
+		- Added Power Buyables.<br>
+		- Added Intensity Challenges.<br>
+		- Added Sub-Control.<br>
 	<h3>v0.1</h3><br>
 		- Game is created.<br>
 		- Added three layers, "Power", "Intensity", and "Control".<br>
@@ -57,9 +61,11 @@ function getPointGen() {
 	if (hasUpgrade('i', 22)) gain = gain.times(2.5)
 	if (hasUpgrade('i', 13)) gain = gain.times(upgradeEffect('i', 13))
 	if (hasUpgrade('i', 11)) gain = gain.times(2.25)
+	if (hasUpgrade('k', 11)) gain = gain.times(buyableEffect("p", 11))
 	if (hasUpgrade('p', 22)) gain = gain.times(2.25)
 	if (hasUpgrade('p', 13)) gain = gain.times(1.75)
 	if (hasUpgrade('p', 11)) gain = gain.times(1.5)
+	if (inChallenge('i', 11)) gain = gain.divide(3)
 	return gain
 }
 
