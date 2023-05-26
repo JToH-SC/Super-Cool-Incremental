@@ -19,6 +19,7 @@ let VERSION = {
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.211</h3><br>
+		- Added an achievement layer, with 8 achievements.<br>
 		- Added new QoL for Power, Intensity, and Control.<br>
 		- Nerfed Control 23.
 	<h3>v0.21</h3><br>
