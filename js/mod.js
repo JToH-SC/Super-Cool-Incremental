@@ -18,6 +18,9 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.211</h3><br>
+		- Added new QoL for Power, Intensity, and Control.<br>
+		- Nerfed Control 23.
 	<h3>v0.21</h3><br>
 		- Added 3 new layers, "Knowledge", "Practice", and "Wisdom".<br>
 		- Added a layer effect to "Knowledge".<br>
