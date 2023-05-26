@@ -685,7 +685,7 @@ addLayer("pr", {
         return new Decimal(player[this.layer].best).add(1).pow(1.2)
     },
     effectDescription() {
-        return "which multiplies power point gain by " + format(tmp.k.effect) + "*."
+        return "which multiplies power point gain by " + format(tmp.pr.effect) + "*."
     },
     increaseUnlockOrder: ['w'],
     gainMult() {
@@ -745,7 +745,7 @@ addLayer("w", {
         return new Decimal(player[this.layer].best).add(1).pow(1.03)
     },
     effectDescription() {
-        return "which exponentiates power point gain by " + format(tmp.k.effect) + "^."
+        return "which exponentiates power point gain by " + format(tmp.w.effect) + "^."
     },
     increaseUnlockOrder: ['w'],
     gainMult() {
