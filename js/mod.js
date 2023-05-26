@@ -54,14 +54,17 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	if (player.k.unlocked) gain = gain.times(tmp.k.effect)
+	if (hasMilestone('k', 1)) gain = gain.times(2)
 	if (hasUpgrade('c', 23)) gain = gain.times(upgradeEffect('c', 23))
 	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
+	if (hasUpgrade('c', 13)) gain = gain.times(2.15)
 	if (hasUpgrade('c', 12)) gain = gain.times(2)
 	if (hasUpgrade('i', 23)) gain = gain.times(upgradeEffect('i', 23))
 	if (hasUpgrade('i', 22)) gain = gain.times(2.5)
 	if (hasUpgrade('i', 13)) gain = gain.times(upgradeEffect('i', 13))
 	if (hasUpgrade('i', 11)) gain = gain.times(2.25)
 	if (hasUpgrade('k', 11)) gain = gain.times(buyableEffect("p", 11))
+	if (hasUpgrade('p', 23)) gain = gain.times(1.35)
 	if (hasUpgrade('p', 22)) gain = gain.times(2.25)
 	if (hasUpgrade('p', 13)) gain = gain.times(1.75)
 	if (hasUpgrade('p', 11)) gain = gain.times(1.5)
@@ -75,6 +78,8 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	"Endgame: 4e20 Points",
+	"You are at: Early Chapter 1"
 ]
 
 // Determines when the game "ends"

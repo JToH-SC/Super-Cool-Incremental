@@ -1,3 +1,59 @@
+addLayer("a", {
+    name: "achievements",
+    symbol: "A",
+    position: 0,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    color: "#f8ff6e",
+    resource: "achievements",
+    type: "none",
+    row: "side",
+    layerShown() {return true},
+    achievements: {
+        11: {
+            name: "Power!!!",
+            tooltip: "Get 1 power point.",
+            done() {if (player.p.points.gte(1)) return true}
+        },
+        12: {
+            name: "Lotsa Power",
+            tooltip: "Get 20 power points.",
+            done() {if (player.p.points.gte(20)) return true}
+        },
+        13: {
+            name: "Your Choice",
+            tooltip: "Get either a Intensity or Control point.",
+            done() {if ((player.i.points.gte(1)) || player.c.points.gte(1)) return true}
+        },
+        14: {
+            name: "What Choice?",
+            tooltip: "Get both Intensity and Control points.",
+            done() {if ((player.i.points.gte(1)) && player.c.points.gte(1)) return true}
+        },
+        15: {
+            name: "2 smart 4 u",
+            tooltip: "Get 1 knowledge point.",
+            done() {if (player.k.points.gte(1)) return true}
+        },
+        16: {
+            name: "Features, Features",
+            tooltip: "Get the first 3 Knowledge Upgrades.",
+            done() {if ((hasUpgrade('k', 11)) && (hasUpgrade('k', 12)) && (hasUpgrade('k', 13))) return true}
+        },
+        17: {
+            name: "Yet Another Choice",
+            tooltip: "Get either Practice or Wisdom points.",
+            done() {if ((player.pr.points.gte(1)) || player.w.points.gte(1)) return true}
+        },
+        21: {
+            name: "wehre chocie",
+            tooltip: "Get both Practice and Wisdom points.",
+            done() {if ((player.pr.points.gte(1)) && player.w.points.gte(1)) return true}
+        },
+    }
+})
 addLayer("p", {
     name: "power", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -23,13 +79,27 @@ addLayer("p", {
         if (hasUpgrade('c', 11)) mult = mult.times(1.75)
         if (hasUpgrade('i', 21)) mult = mult.times(upgradeEffect('i', 21))
         if (hasUpgrade('i', 12)) mult = mult.times(1.75)
-        if (hasUpgrade('p', 23)) mult = mult.times(1.5)
         if (hasUpgrade('p', 21)) mult = mult.times(2)
         if (hasUpgrade('p', 12)) mult = mult.times(1.25)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
+    },
+    doReset(resettingLayer) {
+        let extraUpgrades = []; //make new array to track extra upgrades you want to keep
+        if (hasMilestone("k",0)) extraUpgrades.push(11,12,13);
+        if (hasMilestone("k",1)) extraUpgrades.push(21,22,23);
+        if (hasMilestone("c",0)) extraUpgrades.push(11,12,13);
+        if (hasMilestone("c",1)) extraUpgrades.push(21,22,23);
+        if (hasMilestone("i",0)) extraUpgrades.push(11,12,13);
+        if (hasMilestone("i",1)) extraUpgrades.push(21,22,23);
+            
+        let keep = [];
+        //do all normal stuff to figure out what to keep
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+            
+        player[this.layer].upgrades.push(...extraUpgrades) //after resetting everything, add the specified upgrades back for this layer
     },
     tabFormat: {
         "Main": {
@@ -123,7 +193,7 @@ addLayer("p", {
         },
         23: {
             title: "Power 6",
-            description: "1.5x Power Points.",
+            description: "1.35x Points.",
             cost: new Decimal(20),
             unlocked() {
                 if (hasUpgrade('p', 22)) return true
@@ -173,11 +243,15 @@ addLayer("i", {
         {key: "i", description: "I: Reset for intensity points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     doReset(resettingLayer) {
-        if (layers[resettingLayer].row <= this.row) return;
-      
+        let extraUpgrades = []; //make new array to track extra upgrades you want to keep
+        if (hasMilestone("k",1)) extraUpgrades.push(11,12,13);
+        if (hasMilestone("k",2)) extraUpgrades.push(21,22,23);
+            
         let keep = [];
         keep.push("challenges");
-        layerDataReset(this.layer, keep);
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+            
+        player[this.layer].upgrades.push(...extraUpgrades) //after resetting everything, add the specified upgrades back for this layer
     },
     tabFormat: {
         "Main": {
@@ -189,6 +263,7 @@ addLayer("i", {
                     function() { return 'You have ' + format(player.points) + ' points' },
                     { "color": "white", "font-size": "16px" }],
                 "blank",
+                "milestones",
                 "blank",
                 "upgrades"
             ],
@@ -225,6 +300,19 @@ addLayer("i", {
             },
             rewardDisplay() { return format(challengeEffect(this.layer, this.id))+"*" },
             canComplete: function() {return player.points.gte(5e9)},
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "2 intensity points",
+            done() {if (player[this.layer].points.gte(2)) return true},
+            effectDescription: "Keeps the first row of Power Upgrades.",
+            },
+        1: {
+            requirementDescription: "12 intensity points",
+            done() {if (player[this.layer].points.gte(12)) return true},
+            effectDescription: "Keeps the second row of Power Upgrades.",
+            unlocked() {if (hasMilestone('i', 0)) return true},
         },
     },
     upgrades: {
@@ -325,13 +413,24 @@ addLayer("c", {
     unlocked() {
         return hasUpgrade('p', 23)
     },
-    effectDescription: function(){if (hasUpgrade('k', 13)) return " which gives " + format(new Decimal.times(2,player.c.points)) + " Sub-Control every second." },
+    effectDescription: function(){if (hasUpgrade('k', 13)) return " which gives " + format(new Decimal.times(0.5,player.c.points)) + " Sub-Control every second." },
     update(diff) {
         let gain = new Decimal(0)
         if (hasUpgrade('k', 13)){
-        gain = new Decimal.times(2,player.c.points)
+        gain = new Decimal.times(0.5,player.c.points)
         }
         player.c.subControl = player.c.subControl.add(gain.times(diff));
+    },
+    doReset(resettingLayer) {
+        let extraUpgrades = []; //make new array to track extra upgrades you want to keep
+        if (hasMilestone("k",1)) extraUpgrades.push(11,12,13);
+        if (hasMilestone("k",2)) extraUpgrades.push(21,22,23);
+            
+        let keep = [];
+        //do all normal stuff to figure out what to keep
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+            
+        player[this.layer].upgrades.push(...extraUpgrades) //after resetting everything, add the specified upgrades back for this layer
     },
     increaseUnlockOrder: ["i"],
     tabFormat: {
@@ -344,8 +443,9 @@ addLayer("c", {
                     function() { return 'You have ' + format(player.points) + ' points' },
                     { "color": "white", "font-size": "16px" }],
                 "blank",
+                "milestones",
                 "blank",
-                ["upgrades", [1, 2]]
+                ["upgrades", [1, 2]],
             ],
         },
         "Sub-Control": {
@@ -368,6 +468,19 @@ addLayer("c", {
             ],
         },
     },
+    milestones: {
+        0: {
+            requirementDescription: "2 control points",
+            done() {if (player[this.layer].points.gte(2)) return true},
+            effectDescription: "Keeps the first row of Power Upgrades.",
+            },
+        1: {
+            requirementDescription: "12 control points",
+            done() {if (player[this.layer].points.gte(12)) return true},
+            effectDescription: "Keeps the second row of Power Upgrades.",
+            unlocked() {if (hasMilestone('c', 0)) return true},
+        },
+    },
     upgrades: {
         11: {
             title: "Control 1",
@@ -384,7 +497,7 @@ addLayer("c", {
         },
         13: {
             title: "Control 3",
-            description: "1.5x Power Points.",
+            description: "2.15x Points.",
             cost: new Decimal(3),
             unlocked() {
                 if (hasUpgrade('c', 12)) return true
@@ -419,7 +532,7 @@ addLayer("c", {
             description: "Control Points boosts Points.",
             cost: new Decimal(12),
             effect() {
-                return player.c.points.add(1).pow(0.6)
+                return player.c.points.add(1).pow(0.3)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
@@ -429,7 +542,7 @@ addLayer("c", {
         31: {
             title: "Sub-Control 1",
             description: "Sub-Control boosts Points.",
-            cost: new Decimal(5e6),
+            cost: new Decimal(1e7),
             effect() {
                 return player.c.subControl.add(1).pow(0.05)
             },
@@ -479,6 +592,41 @@ addLayer("k", {
     unlocked() {
         return hasUpgrade('p', 31)
     },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'You have ' + format(player.points) + ' points' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                "milestones",
+                "blank",
+                "upgrades",
+            ],
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "2 knowledge points",
+            done() {if (player[this.layer].points.gte(2)) return true},
+            effectDescription: "Keeps the first row of Power Upgrades.",
+            },
+        1: {
+            requirementDescription: "6 knowledge points",
+            done() {if (player[this.layer].points.gte(6)) return true},
+            effectDescription: "Keeps the first row of Intensity and Control Upgrades.",
+            unlocked() {if (hasMilestone('k', 0)) return true},
+        },
+        2: {
+            requirementDescription: "10 knowledge points",
+            done() {if (player[this.layer].points.gte(10)) return true},
+            effectDescription: "Keeps the second row of Power, Intensity, and Control upgrades, and doubles point gain.",
+            unlocked() {if (hasMilestone('k', 1)) return true},
+        },
+    },
     upgrades: {
         11: {
             title: "Knowledge 1",
@@ -525,7 +673,7 @@ addLayer("pr", {
     color: "#B5DA44",
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(2e37)
+        else return new Decimal(4e20)
     }, // Can be a function that takes requirement increases into account
     resource: "practice points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
@@ -585,7 +733,7 @@ addLayer("w", {
     color: "#F9C3FF",
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(2e37)
+        else return new Decimal(4e20)
     }, // Can be a function that takes requirement increases into account
     resource: "wisdom points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
