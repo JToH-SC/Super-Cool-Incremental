@@ -13,15 +13,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.211",
-	name: "Early Early Chapter QoL 1",
+	num: "0.2111",
+	name: "Early Early-Mid Chapter QoL 1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.2111</h3><br>
+		- Nerfed Intensity 3 and 6.<br>
+		- Nerfed Knowledge and Practice boost.<br>
+		- Achievements now count, and added 32 new achievements, which cannot be achieved yet.<br>
+		- ENDGAME: 5E14<br>
 	<h3>v0.211</h3><br>
 		- Added an achievement layer, with 8 achievements.<br>
 		- Added new QoL for Power, Intensity, and Control.<br>
-		- Nerfed Control 23.<br>
+		- Nerfed Control 6.<br>
+		- ENDGAME: 4E20<br>
 	<h3>v0.21</h3><br>
 		- Added 3 new layers, "Knowledge", "Practice", and "Wisdom".<br>
 		- Added a layer effect to "Knowledge".<br>
@@ -29,12 +35,14 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added Power Buyables.<br>
 		- Added Intensity Challenges.<br>
 		- Added Sub-Control.<br>
+		- ENDGAME: 2E37<br>
 	<h3>v0.1</h3><br>
 		- Game is created.<br>
 		- Added three layers, "Power", "Intensity", and "Control".<br>
 		- Added 7 upgrades to "Power".<br>
 		- Added 6 upgrades to "Intensity".<br>
-		- Added 6 upgrades to "Control".`
+		- Added 6 upgrades to "Control".<br>
+		- ENDGAME: 500,000 POINTS`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -82,7 +90,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Endgame: 4e20 Points",
+	"Endgame: 5e14 Points",
 	"You are at: Early Chapter 1"
 ]
 

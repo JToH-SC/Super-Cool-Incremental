@@ -11,6 +11,23 @@ addLayer("a", {
     type: "none",
     row: "side",
     layerShown() {return true},
+    update() {
+        player.a.points = new Decimal(player.a.achievements.length)
+    },
+    tabFormat: {
+        "Achievements": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'You have ' + format(player.a.points) + '/28 achievements' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                "achievements",
+            ],
+        },
+    },
     achievements: {
         11: {
             name: "Power!!!",
@@ -52,8 +69,109 @@ addLayer("a", {
             tooltip: "Get both Practice and Wisdom points.",
             done() {if ((player.pr.points.gte(1)) && player.w.points.gte(1)) return true}
         },
+        22: {
+            name: "Not School",
+            tooltip: "Get 1 Learning Point.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        23: {
+            name: "The Journey Continues",
+            tooltip: "Get [large number] points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        24: {
+            name: "The Effort Begins!!!",
+            tooltip: "Get 1 Effort Point.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        25: {
+            name: "Can't See Crap",
+            tooltip: "Get 15 Darkness Fragments.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        26: {
+            name: "Am I Supposed To...",
+            tooltip: "Create 5 Nuclear Bombs.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        27: {
+            name: "The Amount is Devastating",
+            tooltip: "Unlock 10 Effort Milestones.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        31: {
+            name: "And Yet Here We Are",
+            tooltip: "Get 1e99 Effort Points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        32: {
+            name: "And We're Leaving!!!",
+            tooltip: "Get either 1 Transcend, Time, or Talent point.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        33: {
+            name: "The Both, Not The All",
+            tooltip: "Get two pairs of Row 5 Layer points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        34: {
+            name: "It's The All",
+            tooltip: "Get all Transcend, Time, and Talent points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        35: {
+            name: "Still Not Out of Early Chapter 1",
+            tooltip: "Get either Xaniness or Quirkiness Points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        36: {
+            name: "Just A Quirky, Xany Guy",
+            tooltip: "Get both Xaniness and Quirkiness Points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        37: {
+            name: "We Already Have This",
+            tooltip: "Get 1 Achievement Point.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        41: {
+            name: "It Is Overwhelming",
+            tooltip: "Get a Row 9 Layer point.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        42: {
+            name: "It Wasnt Like This",
+            tooltip: "Get [larger number] points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        43: {
+            name: "Good Choices.",
+            tooltip: "Get 2 Row 9 Layer points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        44: {
+            name: "Almost There!",
+            tooltip: "Get 3 Row 9 Layer points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        45: {
+            name: "The Final Stretch",
+            tooltip: "Get all Row 9 Layer points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        46: {
+            name: "Penultimate",
+            tooltip: "Get [large number] of each resource.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        47: {
+            name: "The First Redo",
+            tooltip: "Get [slightly-big number] Redo Points.",
+            done() {if (player.points.gte(Infinity)) return true}
+        },
+        }
     }
-})
+)
 addLayer("p", {
     name: "power", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -73,7 +191,7 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
-        if (player.pr.unlocked) mult = mult.times(tmp.k.effect)
+        if (player.pr.unlocked) mult = mult.times(tmp.pr.effect)
         if (hasChallenge('i', 11)) mult = mult.times(challengeEffect('i', 11))
         if (hasUpgrade('c', 13)) mult = mult.times(2.5)
         if (hasUpgrade('c', 11)) mult = mult.times(1.75)
@@ -334,7 +452,7 @@ addLayer("i", {
             description: "Intensity Points boosts Points.",
             cost: new Decimal(3),
             effect() {
-                return player[this.layer].points.add(1).pow(0.5)
+                return player[this.layer].points.add(1).pow(0.3)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
@@ -366,7 +484,7 @@ addLayer("i", {
             description: "Power Points boosts Points.",
             cost: new Decimal(8),
             effect() {
-                return player.p.points.add(1).pow(0.2)
+                return player.p.points.add(1).pow(0.1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
@@ -567,12 +685,12 @@ addLayer("k", {
     requires() { return new Decimal(500000) }, // Can be a function that takes requirement increases into account
     resource: "knowledge points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
-    branches: ["i", "c"],
+    branches: ["i", "c", "p"],
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.1, // Prestige currency exponent
     effect() {
-        return new Decimal(player[this.layer].best).add(1).pow(1.1)
+        return new Decimal(player[this.layer].best).add(1).pow(0.7)
     },
     effectDescription() {
         return "which multiplies point gain by " + format(tmp.k.effect) + "*."
@@ -583,6 +701,12 @@ addLayer("k", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
+    },
+    doReset() {
+        player.i.unlocked = false
+        player.c.unlocked = false
+
+        layerDataReset(this.layer)
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -672,20 +796,36 @@ addLayer("pr", {
     }},
     color: "#B5DA44",
     requires() {
-        if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(4e20)
+        if (player[this.layer].unlockOrder === 1) return new Decimal(5e40)
+        else return new Decimal(5e14)
     }, // Can be a function that takes requirement increases into account
     resource: "practice points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
-    branches: ["k"],
+    branches: ["k", "w"],
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.1, // Prestige currency exponent
     effect() {
-        return new Decimal(player[this.layer].best).add(1).pow(1.2)
+        return new Decimal(player[this.layer].best).add(1).pow(1.1)
     },
     effectDescription() {
         return "which multiplies power point gain by " + format(tmp.pr.effect) + "*."
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'You have ' + format(player.points) + ' points' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                "milestones",
+                "blank",
+                "upgrades",
+            ],
+        },
     },
     increaseUnlockOrder: ['w'],
     gainMult() {
@@ -695,11 +835,12 @@ addLayer("pr", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    row: 2, // Row the layer is in on the tree (0 is the first row)
+    displayRow: 2,
+    row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "k", description: "K: Reset for knowledge points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked },
+    layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked || player.w.unlocked},
     unlocked() {
         return hasUpgrade('k', 21)
     },
@@ -732,12 +873,12 @@ addLayer("w", {
     }},
     color: "#F9C3FF",
     requires() {
-        if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
-        else return new Decimal(4e20)
+        if (player[this.layer].unlockOrder === 1) return new Decimal(5e40)
+        else return new Decimal(5e14)
     }, // Can be a function that takes requirement increases into account
     resource: "wisdom points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
-    branches: ["k"],
+    branches: ["k", "pr"],
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.1, // Prestige currency exponent
@@ -755,11 +896,12 @@ addLayer("w", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    row: 2, // Row the layer is in on the tree (0 is the first row)
+    displayRow: 2,
+    row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "k", description: "K: Reset for knowledge points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked },
+    layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked || player.pr.unlocked},
     unlocked() {
         return hasUpgrade('k', 21)
     },
