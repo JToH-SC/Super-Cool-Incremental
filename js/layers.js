@@ -191,6 +191,7 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
+        if (player.w.unlocked) mult = mult.times(tmp.w.effect)
         if (player.pr.unlocked) mult = mult.times(tmp.pr.effect)
         if (hasChallenge('i', 11)) mult = mult.times(challengeEffect('i', 11))
         if (hasUpgrade('c', 13)) mult = mult.times(2.5)
