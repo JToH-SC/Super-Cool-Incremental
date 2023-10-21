@@ -202,7 +202,7 @@ addLayer("l", {
     infoboxes: {
         yeah: {
             title: "Note 1",
-            unlocked() {return hasUpgrade('pr', 1)},
+            unlocked() {return hasUpgrade('pr', 11)},
             body() { return "he didn't have to" },
         },
     }
