@@ -172,6 +172,78 @@ addLayer("a", {
         }
     }
 )
+addLayer("l", {
+    name: "lore",
+    symbol: "L",
+    position: 1,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    color: "#9c9c9c",
+    resource: "notes",
+    type: "none",
+    row: "side",
+    layerShown() {return true},
+    tabFormat: {
+        "Lore": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'More lore will show up as the game goes on.' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                ["infobox", "yeah"],
+            ],
+        },
+    },
+    infoboxes: {
+        yeah: {
+            title: "Note 1",
+            unlocked() {return hasUpgrade('pr', 1)},
+            body() { return "he didn't have to" },
+        },
+    }
+}
+)
+addLayer("l", {
+    name: "lore",
+    symbol: "L",
+    position: 1,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    color: "#9c9c9c",
+    resource: "notes",
+    type: "none",
+    row: "side",
+    layerShown() {return true},
+    tabFormat: {
+        "Lore": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text",
+                    function() { return 'More lore will show up as the game goes on.' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                ["infobox", "yeah"],
+            ],
+        },
+    },
+    infoboxes: {
+        yeah: {
+            title: "Note 1",
+            unlocked() {return hasUpgrade('pr', 1)},
+            body() { return "he didn't have to" },
+        },
+    }
+}
+)
 addLayer("p", {
     name: "power", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -268,6 +340,21 @@ addLayer("p", {
             unlocked(){return hasUpgrade("k",11)},
             effect(x) {
               mult2 = new Decimal(x).gte(15)? new Decimal(4).pow(15).mul(new Decimal(2.5).pow(new Decimal(x).sub(15))):new Decimal(2).pow(x)
+              return mult2
+            },
+        },
+        12: {
+            title: "Power Buyable 2",
+            cost(x) { return new Decimal(1000).mul(new Decimal(1000).pow(x)) },
+            display() {return `Triple point gain everytime.\nLevel: ${format(getBuyableAmount(this.layer, this.id))}\nCost: ${format(this.cost())}\nEffect: ${format(this.effect())}x points`},
+            canAfford() {return player.p.points.gte(this.cost())},
+            buy() {
+                player.p.points = player.p.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked(){return hasUpgrade("pr",11)},
+            effect(x) {
+              mult2 = new Decimal(x).gte(15)? new Decimal(4).pow(15).mul(new Decimal(2.5).pow(new Decimal(x).sub(15))):new Decimal(3).pow(x)
               return mult2
             },
         },
@@ -846,8 +933,12 @@ addLayer("pr", {
     upgrades: {
         11: {
             title: "Practice 1",
-            description: "adding later",
-            cost: new Decimal(3),
+            description: "Add another Power Buyable (...lore?)",
+            style: {
+                width: '125px',
+                height: '100px',
+            },
+            cost: new Decimal(1),
         },
         12: {
             title: "Practice 2",
