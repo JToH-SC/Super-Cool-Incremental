@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2111",
-	name: "Early Early-Mid Chapter QoL 1",
+	num: "0.21111",
+	name: "Is It Still Not Fixed?",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.21111</h3><br>
+		- Hopefully fixed knowledge gain.<br>
+		- ENDGAME: 5E14<br>
 	<h3>v0.2111</h3><br>
 		- Nerfed Intensity 3 and 6.<br>
 		- Nerfed Knowledge and Practice boost.<br>

@@ -706,8 +706,6 @@ addLayer("k", {
     doReset() {
         player.i.unlocked = false
         player.c.unlocked = false
-
-        layerDataReset(this.layer)
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -839,7 +837,7 @@ addLayer("pr", {
     displayRow: 2,
     row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "k", description: "K: Reset for knowledge points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "r", description: "R: Reset for practice points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked || player.w.unlocked},
     unlocked() {
@@ -900,7 +898,7 @@ addLayer("w", {
     displayRow: 2,
     row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "k", description: "K: Reset for knowledge points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "w", description: "W: Reset for wisdom points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked || player.pr.unlocked},
     unlocked() {
