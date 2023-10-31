@@ -108,7 +108,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Endgame: 5e40 Points",
+	"Endgame: 1e100 Points",
 	"You are at: Early Chapter 1"
 ]
 
