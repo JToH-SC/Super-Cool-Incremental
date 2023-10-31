@@ -4,8 +4,9 @@ body {
 	overflow: hidden;
 	--background: #0f0f0f;
 	--color: #dfdfdf;
-	--points: #ffffff;
-	background: var(--background)
+	--points: #0099ff;
+	background: var(--background);
+	background-image: url(https://img.freepik.com/premium-vector/abstract-stippled-seamless-pattern-dotted-grunge-background_87538-1409.jpg?w=360)
 }
 
 /* General text */
