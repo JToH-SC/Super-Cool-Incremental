@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.22",
-	name: "Like GD 2.2",
+	num: "0.23",
+	name: "Early Early-Mid Chapter 1: Part 3",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.23</h3><br>
+		- Fixed descriptions.<br>
+		- Added another Power Buyable.<br>
 	<h3>v0.22</h3><br>
 		- Added lore.<br>
 		- Added another Power Buyable.<br>

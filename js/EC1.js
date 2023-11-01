@@ -81,7 +81,7 @@ addLayer("a", {
             name: "Not School",
             tooltip: "Get 1 Learning Point.",
             image: "https://cdn.discordapp.com/attachments/978493156058333195/1165940818369052672/Untitled1193_20231023170917.png?ex=6548ae01&is=65363901&hm=82ca06a91af8fd073443959c53e3658e23cbb3bfbb12efe4a2eef4e0d9e5966f&",
-            done() {if (player.points.gte(Infinity)) return true}
+            done() {if (player.l.points.gte(1)) return true}
         },
         23: {
             name: "The Journey Continues",
@@ -422,7 +422,7 @@ addLayer("p", {
             description: "Double Intensity and Control point gain.",
             cost: new Decimal("3e10"),
             unlocked() {
-                if (hasUpgrade('p', 31)) return true
+                if (hasUpgrade('w', 11)) return true
             },
         },
         33: {
@@ -797,6 +797,7 @@ addLayer("k", {
         unlocked: false,
 		points: new Decimal(0),
         best: new Decimal(0),
+        total: new Decimal(0),
     }},
     color: "#B66EFF",
     requires() { return new Decimal(500000) }, // Can be a function that takes requirement increases into account
@@ -826,10 +827,6 @@ addLayer("k", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    doReset() {
-        player.i.unlocked = false
-        player.c.unlocked = false
-    },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "k", description: "K: Reset for knowledge points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -856,19 +853,19 @@ addLayer("k", {
     },
     milestones: {
         0: {
-            requirementDescription: "2 knowledge points",
-            done() {if (player[this.layer].points.gte(2)) return true},
+            requirementDescription: "2 total knowledge points",
+            done() {if (player[this.layer].total.gte(2)) return true},
             effectDescription: "Keeps the first row of Power Upgrades.",
             },
         1: {
-            requirementDescription: "6 knowledge points",
-            done() {if (player[this.layer].points.gte(6)) return true},
+            requirementDescription: "8 total knowledge points",
+            done() {if (player[this.layer].total.gte(6)) return true},
             effectDescription: "Keeps the first row of Intensity and Control Upgrades.",
             unlocked() {if (hasMilestone('k', 0)) return true},
         },
         2: {
-            requirementDescription: "10 knowledge points",
-            done() {if (player[this.layer].points.gte(10)) return true},
+            requirementDescription: "15 total knowledge points",
+            done() {if (player[this.layer].total.gte(15)) return true},
             effectDescription: "Keeps the second row of Power, Intensity, and Control upgrades, and doubles point gain.",
             unlocked() {if (hasMilestone('k', 1)) return true},
         },
@@ -956,8 +953,8 @@ addLayer("pr", {
         return eff
     },
     effectDescription() {
-        if (player.pr.points.gte("5e4")) return "which multiplies power point gain by " + format(tmp.pr.effect) + "*, which is softcapped by ^0.5."
-        else return "which multiplies power point gain by " + format(tmp.pr.effect) + "*."
+        if (player.pr.points.gte("5e4")) return "which the total multiplies power point gain by " + format(tmp.pr.effect) + "*, which is softcapped by ^0.5."
+        else return "which the total multiplies power point gain by " + format(tmp.pr.effect) + "*."
     },
     tabFormat: {
         "Main": {
@@ -1151,8 +1148,8 @@ addLayer("w", {
         return eff
     },
     effectDescription() {
-        if (player.w.points.gte("1e5")) return "which exponentiates power point gain by " + format(tmp.w.effect) + "^, which is softcapped by ^0.5."
-        else return "which exponentiates power point gain by " + format(tmp.w.effect) + "^."
+        if (player.w.points.gte("1e5")) return "which the total exponentiates power point gain by " + format(tmp.w.effect) + "^, which is softcapped by ^0.5."
+        else return "which the total exponentiates power point gain by " + format(tmp.w.effect) + "^."
     },
     increaseUnlockOrder: ['pr'],
     gainMult() {
@@ -1408,7 +1405,6 @@ addLayer("l", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    displayRow: 3,
     row: 4, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "l", description: "L: Reset for learning points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
