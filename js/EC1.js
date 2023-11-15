@@ -1,13 +1,14 @@
 addLayer("a", {
     name: "achievements",
-    symbol: "A",
-    position: 0,
+    symbol: "I",
+    position: 1,
     startData() { return {
         unlocked: true,
         points: new Decimal(0),
     }},
     color: "#f8ff6e",
     resource: "achievements",
+    tooltip: "Info",
     type: "none",
     row: "side",
     layerShown() {return true},
@@ -25,6 +26,43 @@ addLayer("a", {
                     { "color": "white", "font-size": "16px" }],
                 "blank",
                 "achievements",
+            ],
+        },
+        "Lore": {
+            embedLayer: 'lo'
+        },
+        "Savebank": {
+            embedLayer: 'SV'
+        },
+        "Boosts": {
+            content: [
+                                ["display-text",
+                    function() { return '<h1>Point Boosts</h1>' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('p',11)) return '- Power 1: 1.5x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('p',13)) return '- Power 3: 1.75x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('p',22)) return '- Power 5: 2.25x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('p',23)) return '- Power 6: 1.35x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('i',11)) return '- Intensity 1: 2.25x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('i',13)) return '- Intensity 3: ' + format(upgradeEffect('i',13)) + 'x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                    function() { if (hasUpgrade('i',22)) return '- Intensity 5: 2.5x' },
+                { "color": "white", "font-size": "16px" }],
+                                ["display-text",
+                function() { if (hasUpgrade('i',23)) return '- Intensity 6: ' + format(upgradeEffect('i',23)) + 'x' },
+                { "color": "white", "font-size": "16px" }],
             ],
         },
     },
@@ -203,35 +241,95 @@ addLayer("a", {
 addLayer("lo", {
     name: "lore",
     symbol: "L",
-    position: 1,
+    position: 2,
     startData() { return {
         unlocked: true,
         points: new Decimal(0),
     }},
     color: "#9c9c9c",
+    tooltip() { return "Lore" },
     resource: "notes",
     type: "none",
     row: "side",
-    layerShown() {return true},
-    tabFormat: {
-        "Lore": {
-            content: [
-                "main-display",
-                "prestige-button",
-                "blank",
-                ["display-text",
-                    function() { return 'More lore will show up as the game goes on.' },
-                    { "color": "white", "font-size": "16px" }],
-                "blank",
-                ["infobox", "yeah"],
-            ],
-        },
-    },
+    layerShown() {return false},
     infoboxes: {
         yeah: {
             title: "Note 1",
             unlocked() {return hasUpgrade('pr', 11)},
             body() { return "he didn't have to" },
+        },
+    }
+}
+)
+addLayer("SV", {
+    name: "savebank",
+    symbol: "SV",
+    position: 0,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    color: "#00d0ff",
+    tooltip() { return "Savebank" },
+    type: "none",
+    row: "side",
+    layerShown() {return false},
+    tabFormat: {
+        "Savebank": {
+            content: [
+                ["display-text",
+                    function() { return 'Here are all the savebanks.<br>Savebanks are used to skip to a certain point of the game, whether to mid-game or endgame.' },
+                    { "color": "white", "font-size": "16px" }],
+                "blank",
+                "clickables",
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            title: "Knowledge",
+            display: "1 Knowledge Point",
+            canClick: true,
+            onClick() {
+                if (!confirm("Your current progress will not be saved!"))
+                    return;
+                importSave("eyJ0YWIiOiJvcHRpb25zLXRhYiIsIm5hdlRhYiI6InRyZWUtdGFiIiwidGltZSI6MTY4MzUzNDQwNDMzMywibm90aWZ5Ijp7fSwidmVyc2lvblR5cGUiOiJBVEpUQVQiLCJ2ZXJzaW9uIjoiMC4yIiwidGltZVBsYXllZCI6NTM0Mi42NDQwMDAwMDAwMDYsImtlZXBHb2luZyI6ZmFsc2UsImhhc05hTiI6ZmFsc2UsInBvaW50cyI6IjYuNzMyODgwODkxNjUyOTk3Iiwic3VidGFicyI6eyJjaGFuZ2Vsb2ctdGFiIjp7fSwicCI6eyJtYWluVGFicyI6Ik1haW4ifSwiaSI6eyJtYWluVGFicyI6Ik1haW4ifX0sImxhc3RTYWZlVGFiIjoiayIsImluZm9ib3hlcyI6e30sImluZm8tdGFiIjp7InVubG9ja2VkIjp0cnVlLCJ0b3RhbCI6IjAiLCJiZXN0IjoiMCIsInJlc2V0VGltZSI6NTM0Mi42NDQwMDAwMDAwMDYsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwib3B0aW9ucy10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjo1MzQyLjY0NDAwMDAwMDAwNiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiJ9LCJjaGFuZ2Vsb2ctdGFiIjp7InVubG9ja2VkIjp0cnVlLCJ0b3RhbCI6IjAiLCJiZXN0IjoiMCIsInJlc2V0VGltZSI6NTM0Mi42NDQwMDAwMDAwMDYsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwicCI6eyJ1bmxvY2tlZCI6dHJ1ZSwicG9pbnRzIjoiMCIsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjozLjE0MDk5OTk5OTk5OTk5OSwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnsiMTEiOiIwIn0sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sImkiOnsidW5sb2NrZWQiOnRydWUsInBvaW50cyI6IjAiLCJ1bmxvY2tPcmRlciI6MCwidG90YWwiOiIwIiwiYmVzdCI6IjAiLCJyZXNldFRpbWUiOjMuMTQwOTk5OTk5OTk5OTk5LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6eyIxMSI6MH0sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sImMiOnsidW5sb2NrZWQiOnRydWUsInBvaW50cyI6IjAiLCJ1bmxvY2tPcmRlciI6MCwidG90YWwiOiIwIiwiYmVzdCI6IjAiLCJyZXNldFRpbWUiOjMuMTQwOTk5OTk5OTk5OTk5LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sImsiOnsidW5sb2NrZWQiOnRydWUsInBvaW50cyI6IjEiLCJ1bmxvY2tPcmRlciI6MCwiYmVzdCI6IjEiLCJ0b3RhbCI6IjEiLCJyZXNldFRpbWUiOjMuMTQwOTk5OTk5OTk5OTk5LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sImJsYW5rIjp7InVubG9ja2VkIjp0cnVlLCJ0b3RhbCI6IjAiLCJiZXN0IjoiMCIsInJlc2V0VGltZSI6NTM0Mi42NDQwMDAwMDAwMDYsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwidHJlZS10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjo1MzQyLjY0NDAwMDAwMDAwNiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiJ9LCJkZXZTcGVlZCI6MX0")
+            },
+            style() {
+                return {
+                    'background-color': tmp.k.color,
+                }
+            },
+        },
+        12: {
+            title: "Practice/<br>Wisdom",
+            display: "Pre-Practice/Wisdom",
+            canClick: true,
+            onClick() {
+                if (!confirm("Your current progress will not be saved!"))
+                    return;
+                importSave("eyJ0YWIiOiJvcHRpb25zLXRhYiIsIm5hdlRhYiI6InRyZWUtdGFiIiwidGltZSI6MTY5ODc1MTI4MTg5Nywibm90aWZ5Ijp7fSwidmVyc2lvblR5cGUiOiJBVEpUQVQiLCJ2ZXJzaW9uIjoiMC4yMiIsInRpbWVQbGF5ZWQiOjExODA5Ljc0NTAwMDAwMDE2Mywia2VlcEdvaW5nIjpmYWxzZSwiaGFzTmFOIjpmYWxzZSwicG9pbnRzIjoiMTAxNjMxMzE3NDI5MTExMC45Iiwic3VidGFicyI6eyJjaGFuZ2Vsb2ctdGFiIjp7fSwicCI6eyJtYWluVGFicyI6IkJ1eWFibGVzIn0sImkiOnsibWFpblRhYnMiOiJNYWluIn0sImMiOnsibWFpblRhYnMiOiJTdWItQ29udHJvbCJ9LCJrIjp7Im1haW5UYWJzIjoiTWFpbiJ9LCJhIjp7Im1haW5UYWJzIjoiQWNoaWV2ZW1lbnRzIn0sImwiOnsibWFpblRhYnMiOiJNYWluIn0sInByIjp7Im1haW5UYWJzIjoiTWFpbiJ9LCJ3Ijp7Im1haW5UYWJzIjoiTWFpbiJ9fSwibGFzdFNhZmVUYWIiOiJjIiwiaW5mb2JveGVzIjp7ImwiOnsieWVhaCI6ZmFsc2V9fSwiaW5mby10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjoxMTgwOS43NDUwMDAwMDAxNjMsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwib3B0aW9ucy10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjoxMTgwOS43NDUwMDAwMDAxNjMsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwiY2hhbmdlbG9nLXRhYiI6eyJ1bmxvY2tlZCI6dHJ1ZSwidG90YWwiOiIwIiwiYmVzdCI6IjAiLCJyZXNldFRpbWUiOjExODA5Ljc0NTAwMDAwMDE2MywiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiJ9LCJhIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiI2IiwidG90YWwiOiIwIiwiYmVzdCI6IjYiLCJyZXNldFRpbWUiOjEwOTg5LjgwMDAwMDAwMDMyMywiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6WyIxMSIsIjEyIiwiMTMiLCIxNCIsIjE1IiwiMTYiXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sImwiOnsidW5sb2NrZWQiOmZhbHNlLCJwb2ludHMiOiIwIiwidG90YWwiOiIwIiwiYmVzdCI6IjAiLCJyZXNldFRpbWUiOjM3NjQuMzM4OTk5OTk5OTc4LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIiwidW5sb2NrT3JkZXIiOjB9LCJwIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiIxMDg0OTYyODkxNyIsInRvdGFsIjoiMTE5NjA3NDAwMjciLCJiZXN0IjoiMTA4NDk2Mjg5MTciLCJyZXNldFRpbWUiOjM2MzUuOTk1OTk5OTk5OTc3NCwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnsiMTEiOiI5IiwiMTIiOiIwIn0sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOlsxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyM10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIiLCJhY3RpdmVDaGFsbGVuZ2UiOm51bGx9LCJpIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiIyNTUyNzAiLCJ1bmxvY2tPcmRlciI6MSwidG90YWwiOiIyNTUyNzAiLCJiZXN0IjoiMjU1MjcwIiwicmVzZXRUaW1lIjozNjQzLjYzNzk5OTk5OTk3NywiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjMsMTEsMTIsMTMsMjEsMjIsMjNdLCJtaWxlc3RvbmVzIjpbIjAiLCIxIl0sImxhc3RNaWxlc3RvbmUiOiIxIiwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6eyIxMSI6MX0sImdyaWQiOnt9LCJwcmV2VGFiIjoiIiwiYWN0aXZlQ2hhbGxlbmdlIjpudWxsfSwiYyI6eyJ1bmxvY2tlZCI6dHJ1ZSwicG9pbnRzIjoiOTg5MjAyMzUiLCJ1bmxvY2tPcmRlciI6MCwic3ViQ29udHJvbCI6IjE4MTY5MDc0ODgyMy4xMzY1IiwidG90YWwiOiIxMDg5MjAyMzUiLCJiZXN0IjoiOTg5MjAyMzUiLCJyZXNldFRpbWUiOjM2NjYuMzQ2OTk5OTk5OTc3LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOlsxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyMywzMSwxMSwxMiwxMywyMSwyMiwyMywxMSwxMiwxMywyMSwyMiwyM10sIm1pbGVzdG9uZXMiOlsiMCIsIjEiXSwibGFzdE1pbGVzdG9uZSI6IjEiLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIiLCJhY3RpdmVDaGFsbGVuZ2UiOm51bGx9LCJrIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiIzNCIsImJlc3QiOiIzNCIsInRvdGFsIjoiOTAiLCJyZXNldFRpbWUiOjM3NDkuNTQ0OTk5OTk5OTc4MiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbMTEsMTIsMTMsMjFdLCJtaWxlc3RvbmVzIjpbIjAiLCIxIiwiMiJdLCJsYXN0TWlsZXN0b25lIjoiMiIsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiIsImFjdGl2ZUNoYWxsZW5nZSI6bnVsbH0sInByIjp7InVubG9ja2VkIjpmYWxzZSwicG9pbnRzIjoiMCIsInVubG9ja09yZGVyIjowLCJiZXN0IjoiMCIsInRvdGFsIjoiMCIsInJlc2V0VGltZSI6MTE4MDkuNzQ1MDAwMDAwMTYzLCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnsiMTEiOiIifSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiIsInByYWN0aWNlVG9rZW4iOiIwIiwicHRDYXAiOiIxMDAifSwidyI6eyJ1bmxvY2tlZCI6ZmFsc2UsInBvaW50cyI6IjAiLCJ1bmxvY2tPcmRlciI6MCwiYmVzdCI6IjAiLCJ0b3RhbCI6IjAiLCJyZXNldFRpbWUiOjExODA5Ljc0NTAwMDAwMDE2MywiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiIsIndpc2RvbUNvaW5zIjoiMCIsIndjR2FpbiI6IjAifSwiYmxhbmsiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjoxMTgwOS43NDUwMDAwMDAxNjMsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwidHJlZS10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjoxMTgwOS43NDUwMDAwMDAxNjMsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifX0")
+            },
+            style() {
+                return {
+                    "background": "linear-gradient(#B5DA44, #F9C3FF)"
+                }
+            },
+        },
+        13: {
+            title: "Learning",
+            display: "Pre-Learning",
+            canClick: true,
+            onClick() {
+                if (!confirm("Your current progress will not be saved!"))
+                    return;
+                importSave("eyJ0YWIiOiJvcHRpb25zLXRhYiIsIm5hdlRhYiI6InRyZWUtdGFiIiwidGltZSI6MTY5OTUzMDk4NDQxNiwibm90aWZ5Ijp7fSwidmVyc2lvblR5cGUiOiJBVEpUQVQiLCJ2ZXJzaW9uIjoiMC4yMyIsInRpbWVQbGF5ZWQiOjg2NjA2LjQzMTAwMDAwMTgzLCJrZWVwR29pbmciOnRydWUsImhhc05hTiI6ZmFsc2UsInBvaW50cyI6IjEuNzIzMTI2NjkyMjcyODk1OGUxMDEiLCJzdWJ0YWJzIjp7ImNoYW5nZWxvZy10YWIiOnt9LCJwIjp7Im1haW5UYWJzIjoiQnV5YWJsZXMifSwiaSI6eyJtYWluVGFicyI6Ik1haW4ifSwiYyI6eyJtYWluVGFicyI6IlN1Yi1Db250cm9sIn0sImsiOnsibWFpblRhYnMiOiJNYWluIn0sImEiOnsibWFpblRhYnMiOiJBY2hpZXZlbWVudHMifSwibCI6eyJtYWluVGFicyI6Ik1haW4ifSwicHIiOnsibWFpblRhYnMiOiJQcmFjdGljZSBUb2tlbnMifSwidyI6eyJtYWluVGFicyI6Ik1haW4ifSwibG8iOnsibWFpblRhYnMiOiJMb3JlIn0sIlNWIjp7Im1haW5UYWJzIjoiU2F2ZWJhbmsifX0sImxhc3RTYWZlVGFiIjoibCIsImluZm9ib3hlcyI6eyJsIjp7InllYWgiOmZhbHNlfSwibG8iOnsieWVhaCI6ZmFsc2V9fSwiaW5mby10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjo0NzYzNjExLjk2ODAwMDEyMDUsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwib3B0aW9ucy10YWIiOnsidW5sb2NrZWQiOnRydWUsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjo0NzYzNjExLjk2ODAwMDEyMDUsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwiY2hhbmdlbG9nLXRhYiI6eyJ1bmxvY2tlZCI6dHJ1ZSwidG90YWwiOiIwIiwiYmVzdCI6IjAiLCJyZXNldFRpbWUiOjQ3NjM2MTEuOTY4MDAwMTIwNSwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiJ9LCJhIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiI4IiwidG90YWwiOiIwIiwiYmVzdCI6IjgiLCJyZXNldFRpbWUiOjQ3NjI3OTIuMDIzMDAwMTIsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOlsiMTEiLCIxMiIsIjEzIiwiMTQiLCIxNSIsIjE2IiwiMTciLCIyMSJdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwibG8iOnsidW5sb2NrZWQiOnRydWUsInBvaW50cyI6IjAiLCJ0b3RhbCI6IjAiLCJiZXN0IjoiMCIsInJlc2V0VGltZSI6NDc1MTgwMi4yMjMwMDAxMiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiJ9LCJTViI6eyJ1bmxvY2tlZCI6dHJ1ZSwicG9pbnRzIjoiMCIsInRvdGFsIjoiMCIsImJlc3QiOiIwIiwicmVzZXRUaW1lIjoxOTMuOTg1LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnsiMTEiOiIiLCIxMiI6IiIsIjEzIjoiIn0sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIifSwicCI6eyJ1bmxvY2tlZCI6dHJ1ZSwicG9pbnRzIjoiNS45ODQ2NTE4MDk4MTMxMDFlNzYiLCJ0b3RhbCI6IjEuNDg1NzY1MTgxNjUxMTg3MmU3OCIsImJlc3QiOiIxLjAxNzYwMDQzMjkxNjU5NDllNzgiLCJyZXNldFRpbWUiOjUxLjU1MTk5OTk5OTk5OTgzNiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnsiMTEiOiI2NSIsIjEyIjoiMjYifSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6WzMyLDMzLDQxLDExLDEyLDEzLDIxLDIyLDIzLDMxXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiIsImFjdGl2ZUNoYWxsZW5nZSI6bnVsbH0sImkiOnsidW5sb2NrZWQiOnRydWUsInBvaW50cyI6IjYuNDIxNjUxNzg4NDY2NjgyZTQ4IiwidW5sb2NrT3JkZXIiOjAsInRvdGFsIjoiNi40MjE2NTE3ODg0NjY2ODJlNDgiLCJiZXN0IjoiNi40MjE2NTE3ODg0NjY2ODJlNDgiLCJyZXNldFRpbWUiOjUxLjU1MTk5OTk5OTk5OTgzNiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbMTEsMTIsMTMsMjEsMjIsMjNdLCJtaWxlc3RvbmVzIjpbIjAiLCIxIl0sImxhc3RNaWxlc3RvbmUiOiIxIiwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6eyIxMSI6MX0sImdyaWQiOnt9LCJwcmV2VGFiIjoiIiwiYWN0aXZlQ2hhbGxlbmdlIjpudWxsfSwiYyI6eyJ1bmxvY2tlZCI6dHJ1ZSwicG9pbnRzIjoiMS45MTg5MTE4NTE2ODE1NzI2ZTY0IiwidW5sb2NrT3JkZXIiOjAsInN1YkNvbnRyb2wiOiI1LjU1NjQ3NDgyMzU1MjQ1N2U2NCIsInRvdGFsIjoiMS45MTg5MTE4NTE2ODE1NzI2ZTY0IiwiYmVzdCI6IjEuOTE4OTExODUxNjgxNTcyNmU2NCIsInJlc2V0VGltZSI6NTEuNTUxOTk5OTk5OTk5ODM2LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOlsxMSwxMiwxMywyMSwyMiwyMywzMV0sIm1pbGVzdG9uZXMiOlsiMCIsIjEiXSwibGFzdE1pbGVzdG9uZSI6IjEiLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIiLCJhY3RpdmVDaGFsbGVuZ2UiOm51bGx9LCJrIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiI2MzUyODA0NDMiLCJiZXN0IjoiNjM1MjgwNDQzIiwidG90YWwiOiI2MzUyODA0OTkiLCJyZXNldFRpbWUiOjUxLjU1MTk5OTk5OTk5OTgzNiwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbMTEsMTIsMTMsMjEsMzFdLCJtaWxlc3RvbmVzIjpbIjAiLCIxIiwiMiJdLCJsYXN0TWlsZXN0b25lIjoiMiIsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiIsImFjdGl2ZUNoYWxsZW5nZSI6bnVsbH0sInByIjp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiI5OTk3MCIsInVubG9ja09yZGVyIjoxLCJiZXN0IjoiMSIsInRvdGFsIjoiMTAwMDAwIiwicmVzZXRUaW1lIjoyMzgzNjYyLjcyMDk5OTkyNSwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7IjExIjoiIn0sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6WzExLDEyLDEzLDMxLDMyLDMzLDIxLDIyXSwibWlsZXN0b25lcyI6W10sImxhc3RNaWxlc3RvbmUiOm51bGwsImFjaGlldmVtZW50cyI6W10sImNoYWxsZW5nZXMiOnt9LCJncmlkIjp7fSwicHJldlRhYiI6IiIsInByYWN0aWNlVG9rZW4iOiI1MDAiLCJwdENhcCI6IjUwMCJ9LCJ3Ijp7InVubG9ja2VkIjp0cnVlLCJwb2ludHMiOiIyMzU1NzkiLCJ1bmxvY2tPcmRlciI6MCwiYmVzdCI6IjIzNTY3OSIsInRvdGFsIjoiMjM1NjgyIiwicmVzZXRUaW1lIjozNDMxNjIuNzIxMDAwMDAxNCwiZm9yY2VUb29sdGlwIjpmYWxzZSwiYnV5YWJsZXMiOnt9LCJub1Jlc3BlY0NvbmZpcm0iOmZhbHNlLCJjbGlja2FibGVzIjp7fSwic3BlbnRPbkJ1eWFibGVzIjoiMCIsInVwZ3JhZGVzIjpbMTEsMTIsMjEsMzEsMzIsNDEsNTEsNTIsNTMsMTNdLCJtaWxlc3RvbmVzIjpbIjAiXSwibGFzdE1pbGVzdG9uZSI6IjAiLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIiLCJ3aXNkb21Db2lucyI6IjQ0NjQyMzIxNTM0Mi44OTE2NiIsIndjR2FpbiI6IjY5NDQ4Mi43Njg2MzcwMDcxIn0sImwiOnsidW5sb2NrZWQiOmZhbHNlLCJwb2ludHMiOiIwIiwidG90YWwiOiIwIiwiYmVzdCI6IjAiLCJyZXNldFRpbWUiOjQ3NTU1NjYuNTYyMDAwMTIsImZvcmNlVG9vbHRpcCI6ZmFsc2UsImJ1eWFibGVzIjp7fSwibm9SZXNwZWNDb25maXJtIjpmYWxzZSwiY2xpY2thYmxlcyI6e30sInNwZW50T25CdXlhYmxlcyI6IjAiLCJ1cGdyYWRlcyI6W10sIm1pbGVzdG9uZXMiOltdLCJsYXN0TWlsZXN0b25lIjpudWxsLCJhY2hpZXZlbWVudHMiOltdLCJjaGFsbGVuZ2VzIjp7fSwiZ3JpZCI6e30sInByZXZUYWIiOiIiLCJ1bmxvY2tPcmRlciI6MH0sImJsYW5rIjp7InVubG9ja2VkIjp0cnVlLCJ0b3RhbCI6IjAiLCJiZXN0IjoiMCIsInJlc2V0VGltZSI6NDc2MzYxMS45NjgwMDAxMjA1LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sInRyZWUtdGFiIjp7InVubG9ja2VkIjp0cnVlLCJ0b3RhbCI6IjAiLCJiZXN0IjoiMCIsInJlc2V0VGltZSI6NDc2MzYxMS45NjgwMDAxMjA1LCJmb3JjZVRvb2x0aXAiOmZhbHNlLCJidXlhYmxlcyI6e30sIm5vUmVzcGVjQ29uZmlybSI6ZmFsc2UsImNsaWNrYWJsZXMiOnt9LCJzcGVudE9uQnV5YWJsZXMiOiIwIiwidXBncmFkZXMiOltdLCJtaWxlc3RvbmVzIjpbXSwibGFzdE1pbGVzdG9uZSI6bnVsbCwiYWNoaWV2ZW1lbnRzIjpbXSwiY2hhbGxlbmdlcyI6e30sImdyaWQiOnt9LCJwcmV2VGFiIjoiIn0sImRldlNwZWVkIjoxfQ==")
+            },
+            style() {
+                return {
+                    'background-color': tmp.l.color,
+                }
+            },
         },
     }
 }
@@ -246,13 +344,13 @@ addLayer("p", {
     }},
     color: "#C900FF",
     automate() {
-        if (hasUpgrade('pr', 31)) {
+        if (hasUpgrade('pr', 12)) {
             buyBuyable('p', 11)
             buyBuyable('p', 12)
         }
     },
     passiveGeneration() {
-        if (hasUpgrade('pr', 32)) return 0.05  
+        if (hasUpgrade('pr', 31)) return 0.05  
     },
     requires() {
         return 10  
@@ -264,12 +362,13 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
+        if (hasUpgrade('l', 12)) mult = mult.times(upgradeEffect('l', 12))
         if (hasUpgrade('p', 41)) mult = mult.times(3.35)
         if (hasUpgrade('w', 41)) mult = mult.times(upgradeEffect('w', 41))
         if (player.w.unlocked) mult = mult.pow(tmp.w.effect)
         if (hasUpgrade('pr', 22)) mult = mult.times(upgradeEffect('pr', 22))
         if (player.pr.unlocked) mult = mult.times(tmp.pr.effect)
-        if (hasChallenge('i', 11)) mult = mult.times(challengeEffect('i', 11))
+        if ((hasChallenge('i', 11)) && (hasUpgrade('k', 12))) mult = mult.times(challengeEffect('i', 11))
         if (hasUpgrade('c', 13)) mult = mult.times(2.5)
         if (hasUpgrade('c', 11)) mult = mult.times(1.75)
         if (hasUpgrade('i', 21)) mult = mult.times(upgradeEffect('i', 21))
@@ -283,12 +382,13 @@ addLayer("p", {
     },
     doReset(resettingLayer) {
         let extraUpgrades = []; //make new array to track extra upgrades you want to keep
+        if (hasMilestone("w",0)) extraUpgrades.push(32,33,41);
         if (hasMilestone("k",0)) extraUpgrades.push(11,12,13);
         if (hasMilestone("k",1)) extraUpgrades.push(21,22,23,31);
         if (hasMilestone("c",0)) extraUpgrades.push(11,12,13);
-        if (hasMilestone("c",1)) extraUpgrades.push(21,22,23,31);
+        if (hasMilestone("c",1)) extraUpgrades.push(21,22,23);
         if (hasMilestone("i",0)) extraUpgrades.push(11,12,13);
-        if (hasMilestone("i",1)) extraUpgrades.push(21,22,23,31);
+        if (hasMilestone("i",1)) extraUpgrades.push(21,22,23);
             
         let keep = [];
         //do all normal stuff to figure out what to keep
@@ -329,13 +429,25 @@ addLayer("p", {
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "p", description: "P: Reset for power points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "p",
+            description: "P: Reset for power points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     buyables: {
         11: {
             title: "Power Buyable 1",
-            cost(x) { return new Decimal(10).mul(new Decimal(10).pow(x)) },
-            display() {return `Double point gain everytime.\nLevel: ${format(getBuyableAmount(this.layer, this.id))}\nCost: ${format(this.cost())}\nEffect: ${format(this.effect())}x points`},
+            cost(x) {
+                let Calculation = new Decimal(10).mul(new Decimal(10).pow(x))
+                if (getBuyableAmount(this.layer, this.id).gte(30)) Calculation = softcap(Calculation, new Decimal(100), 1.1)
+                return Calculation
+            },
+            display() {
+                if (getBuyableAmount(this.layer, this.id).gte(30)) return `Double point gain everytime.\nLevel: ${format(getBuyableAmount(this.layer, this.id))}\nCost: ${format(this.cost())} (softcapped)\nEffect: ${format(this.effect())}x points`
+                return `Double point gain everytime.\nLevel: ${format(getBuyableAmount(this.layer, this.id))}\nCost: ${format(this.cost())}\nEffect: ${format(this.effect())}x points`
+            },
             canAfford() {return player.p.points.gte(this.cost())},
             buy() {
                 player.p.points = player.p.points.sub(this.cost())
@@ -343,7 +455,7 @@ addLayer("p", {
             },
             unlocked(){return hasUpgrade("k",11)},
             effect(x) {
-              mult2 = new Decimal(x).gte(15)? new Decimal(4).pow(15).mul(new Decimal(2.5).pow(new Decimal(x).sub(15))):new Decimal(2).pow(x)
+              mult2 = new Decimal(2).pow(x)
               return mult2
             },
         },
@@ -374,7 +486,7 @@ addLayer("p", {
             description: "1.25x Power Points.",
             cost: new Decimal(2),
             unlocked() {
-                if (hasUpgrade('p', 11)) return true
+                if ((hasUpgrade('p',11))||player.i.unlocked||player.c.unlocked) return true
             },
         },
         13: {
@@ -382,7 +494,7 @@ addLayer("p", {
             description: "1.75x Points.",
             cost: new Decimal(4),
             unlocked() {
-                if (hasUpgrade('p', 12)) return true
+                if ((hasUpgrade('p',12))||player.i.unlocked||player.c.unlocked) return true
             },
         },
         21: {
@@ -390,7 +502,7 @@ addLayer("p", {
             description: "2x Power Points.",
             cost: new Decimal(6),
             unlocked() {
-                if (hasUpgrade('p', 13)) return true
+                if ((hasUpgrade('p',13))||player.i.unlocked||player.c.unlocked) return true
             },
         },
         22: {
@@ -398,7 +510,7 @@ addLayer("p", {
             description: "2.25x Points.",
             cost: new Decimal(10),
             unlocked() {
-                if (hasUpgrade('p', 21)) return true
+                if ((hasUpgrade('p',21))||player.i.unlocked||player.c.unlocked) return true
             },
         },
         23: {
@@ -406,7 +518,7 @@ addLayer("p", {
             description: "1.35x Points.",
             cost: new Decimal(20),
             unlocked() {
-                if (hasUpgrade('p', 22)) return true
+                if ((hasUpgrade('p',22))||player.i.unlocked||player.c.unlocked) return true
             },
         },
         31: {
@@ -414,7 +526,7 @@ addLayer("p", {
             description: "Unlock new content.",
             cost: new Decimal(20000),
             unlocked() {
-                if ((hasUpgrade('i', 23)) && (hasUpgrade('c', 23)) && (hasUpgrade('p', 23))) return true
+                if ((hasUpgrade('i', 23)) && (hasUpgrade('c', 23)) && (hasUpgrade('p', 23))||player.i.unlocked||player.c.unlocked) return true
             },
         },
         32: {
@@ -422,7 +534,7 @@ addLayer("p", {
             description: "Double Intensity and Control point gain.",
             cost: new Decimal("3e10"),
             unlocked() {
-                if (hasUpgrade('w', 11)) return true
+                if (((hasUpgrade('w', 11)) && (hasUpgrade('p', 31)))||player.w.unlocked) return true
             },
         },
         33: {
@@ -430,7 +542,7 @@ addLayer("p", {
             description: "2.75x Points.",
             cost: new Decimal("3e12"),
             unlocked() {
-                if (hasUpgrade('p', 32)) return true
+                if (hasUpgrade('p', 32)||player.w.unlocked) return true
             },
         },
         41: {
@@ -438,7 +550,7 @@ addLayer("p", {
             description: "3.35x Power Points.",
             cost: new Decimal("3e14"),
             unlocked() {
-                if (hasUpgrade('p', 33)) return true
+                if (hasUpgrade('p', 33)||player.w.unlocked) return true
             },
         },
         },
@@ -454,6 +566,9 @@ addLayer("i", {
         unlockOrder: 0,
     }},
     color: "#38FFB1",
+    passiveGeneration() {
+        if (hasUpgrade('pr', 13)) return 0.01
+    },
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
         else return new Decimal(100)
@@ -466,6 +581,7 @@ addLayer("i", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
+        if (hasUpgrade('l', 12)) mult = mult.times(upgradeEffect('l', 12))
         if (hasUpgrade('p', 32)) mult = mult.times(2)
         return mult
     },
@@ -474,7 +590,12 @@ addLayer("i", {
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "i", description: "I: Reset for intensity points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "i",
+            description: "I: Reset for intensity points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     doReset(resettingLayer) {
         let extraUpgrades = []; //make new array to track extra upgrades you want to keep
@@ -496,6 +617,12 @@ addLayer("i", {
                 ["display-text",
                     function() { return 'You have ' + format(player.points) + ' points' },
                     { "color": "white", "font-size": "16px" }],
+                ["display-text",
+                    function() { 
+                       if (player.i.total.eq(1)) return 'Your total intensity points is ' + format(player.i.total) 
+                       else return 'Your total intensity points are ' + format(player.i.total) 
+                    },
+            { "color": "white", "font-size": "16px" }],
                 "blank",
                 "milestones",
                 "blank",
@@ -528,23 +655,23 @@ addLayer("i", {
         11: {
             name: "Intensity Challenge 1",
             challengeDescription: "Divides point gain by 3.<br> Reward: Knowledge Points boosts Power Points.",
-            goalDescription: "5e9 points",
+            goalDescription: "1e12 points",
             rewardEffect() {
                 return player.k.points.add(1).pow(0.75)
             },
             rewardDisplay() { return format(challengeEffect(this.layer, this.id))+"*" },
-            canComplete: function() {return player.points.gte(5e9)},
+            canComplete: function() {return player.points.gte(1e12)},
         },
     },
     milestones: {
         0: {
-            requirementDescription: "2 intensity points",
-            done() {if (player[this.layer].points.gte(2)) return true},
+            requirementDescription: "2 total intensity points",
+            done() {if (player[this.layer].total.gte(2)) return true},
             effectDescription: "Keeps the first row of Power Upgrades.",
             },
         1: {
-            requirementDescription: "12 intensity points",
-            done() {if (player[this.layer].points.gte(12)) return true},
+            requirementDescription: "12 total intensity points",
+            done() {if (player[this.layer].total.gte(12)) return true},
             effectDescription: "Keeps the second row of Power Upgrades.",
             unlocked() {if (hasMilestone('i', 0)) return true},
         },
@@ -560,7 +687,7 @@ addLayer("i", {
             description: "1.75x Power Points.",
             cost: new Decimal(2),
             unlocked() {
-                if (hasUpgrade('i', 11)) return true
+                if (hasUpgrade('i', 11)||player.k.unlocked) return true
             },
         },
         13: {
@@ -570,9 +697,10 @@ addLayer("i", {
             effect() {
                 return player[this.layer].points.add(1).pow(0.3)
             },
+            tooltip: "(Intensity)+1^0.3",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if (hasUpgrade('i', 12)) return true
+                if (hasUpgrade('i', 12)||player.k.unlocked) return true
             },
         },
         21: {
@@ -582,9 +710,10 @@ addLayer("i", {
             effect() {
                 return player.p.points.add(1).pow(0.1)
             },
+            tooltip: "(Power)+1^0.1",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
-                if (hasUpgrade('i', 13)) return true
+                if (hasUpgrade('i', 13)||player.k.unlocked) return true
             },
         },
         22: {
@@ -592,7 +721,7 @@ addLayer("i", {
             description: "2.5x Points.",
             cost: new Decimal(6),
             unlocked() {
-                if (hasUpgrade('i', 21)) return true
+                if (hasUpgrade('i', 21)||player.k.unlocked) return true
             },
         },
         23: {
@@ -602,9 +731,10 @@ addLayer("i", {
             effect() {
                 return player.p.points.add(1).pow(0.1)
             },
+            tooltip: "(Power)+1^0.1",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
-                if (hasUpgrade('i', 22)) return true
+                if (hasUpgrade('i', 22)||player.k.unlocked) return true
             },
         },
         },
@@ -621,6 +751,9 @@ addLayer("c", {
         subControl: new Decimal(0),
     }},
     color: "#C72B6D",
+    passiveGeneration() {
+        if (hasUpgrade('w', 13)) return 0.01
+    },
     requires() {
         if (player[this.layer].unlockOrder === 1) return new Decimal(1000)
         else return new Decimal(100)
@@ -633,6 +766,8 @@ addLayer("c", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
+        if (hasUpgrade('c', 33)) mult = mult.times(upgradeEffect('c', 33))
+        if (hasUpgrade('l', 12)) mult = mult.times(upgradeEffect('l', 12))
         if (hasUpgrade('c', 22)) mult = mult.times(upgradeEffect('c', 22))
         if (hasUpgrade('p', 32)) mult = mult.times(2)
         return mult
@@ -642,18 +777,22 @@ addLayer("c", {
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "c", description: "C: Reset for control points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "c",
+            description: "C: Reset for control points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     layerShown() { return hasUpgrade('p', 23) || player[this.layer].unlocked || player.i.unlocked },
     unlocked() {
         return hasUpgrade('p', 23)
     },
-    effectDescription: function(){if (hasUpgrade('k', 13)) return " which gives " + format(new Decimal.times(0.5,player.c.points)) + " Sub-Control every second." },
+    effectDescription: function(){if (hasUpgrade('k', 13)) return " which gives " + format(new Decimal.pow(player.c.points,0.5)) + " Sub-Control every second." },
     update(diff) {
         let gain = new Decimal(0)
-        if (hasUpgrade('k', 13)){
-        gain = new Decimal.times(0.5,player.c.points)
-        }
+        if (hasUpgrade('k', 13)) gain = new Decimal.pow(player.c.points,0.5)
+        if (hasUpgrade('c', 32)) gain = gain.times(upgradeEffect('c', 32))
         player.c.subControl = player.c.subControl.add(gain.times(diff));
     },
     doReset(resettingLayer) {
@@ -677,6 +816,12 @@ addLayer("c", {
                 ["display-text",
                     function() { return 'You have ' + format(player.points) + ' points' },
                     { "color": "white", "font-size": "16px" }],
+                ["display-text",
+                    function() { 
+                       if (player.c.total.eq(1)) return 'Your total control points is ' + format(player.c.total) 
+                       else return 'Your total control points are ' + format(player.c.total) 
+                    },
+            { "color": "white", "font-size": "16px" }],
                 "blank",
                 "milestones",
                 "blank",
@@ -705,13 +850,13 @@ addLayer("c", {
     },
     milestones: {
         0: {
-            requirementDescription: "2 control points",
-            done() {if (player[this.layer].points.gte(2)) return true},
+            requirementDescription: "2 total control points",
+            done() {if (player[this.layer].total.gte(2)) return true},
             effectDescription: "Keeps the first row of Power Upgrades.",
             },
         1: {
-            requirementDescription: "12 control points",
-            done() {if (player[this.layer].points.gte(12)) return true},
+            requirementDescription: "12 total control points",
+            done() {if (player[this.layer].total.gte(12)) return true},
             effectDescription: "Keeps the second row of Power Upgrades.",
             unlocked() {if (hasMilestone('c', 0)) return true},
         },
@@ -727,7 +872,7 @@ addLayer("c", {
             description: "2x Points.",
             cost: new Decimal(2),
             unlocked() {
-                if (hasUpgrade('c', 11)) return true
+                if (hasUpgrade('c', 11)||player.k.unlocked) return true
             },
         },
         13: {
@@ -735,7 +880,7 @@ addLayer("c", {
             description: "2.15x Points.",
             cost: new Decimal(3),
             unlocked() {
-                if (hasUpgrade('c', 12)) return true
+                if (hasUpgrade('c', 12)||player.k.unlocked) return true
             },
         },
         21: {
@@ -745,9 +890,10 @@ addLayer("c", {
             effect() {
                 return player.points.add(1).pow(0.15)
             },
+            tooltip: "(Points)+1^0.15",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
-                if (hasUpgrade('c', 13)) return true
+                if (hasUpgrade('c', 13)||player.k.unlocked) return true
             },
         },
         22: {
@@ -757,9 +903,10 @@ addLayer("c", {
             effect() {
                 return player.p.points.add(1).pow(0.2)
             },
+            tooltip: "(Power)+1^0.2",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
-                if (hasUpgrade('c', 21)) return true
+                if (hasUpgrade('c', 21)||player.k.unlocked) return true
             },
         },
         23: {
@@ -769,21 +916,58 @@ addLayer("c", {
             effect() {
                 return player.c.points.add(1).pow(0.3)
             },
+            tooltip: "(Control)+1^0.3",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
-                if (hasUpgrade('c', 22)) return true
+                if (hasUpgrade('c', 22)||player.k.unlocked) return true
             },
         },
         31: {
             title: "Sub-Control 1",
             description: "Sub-Control boosts Points.",
-            cost: new Decimal(1e7),
+            cost: new Decimal(100000),
+            currencyDisplayName: "Sub-Control points",
+            currencyInternalName: "subControl",
+            currencyLayer: "c",
             effect() {
-                return player.c.subControl.add(1).pow(0.05)
+                return player.c.subControl.add(1).log(200)
             },
+            tooltip: "log200((Sub-Control)+1)",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
             unlocked() {
-                if (hasUpgrade('k', 13)) return true
+                if (hasUpgrade('k', 13)||player.k.unlocked) return true
+            },
+        },
+        32: {
+            title: "Sub-Control 2",
+            description: "Let Points boost Sub-Control.",
+            cost: new Decimal(1e9),
+            currencyDisplayName: "Sub-Control points",
+            currencyInternalName: "subControl",
+            currencyLayer: "c",
+            effect() {
+                return player.points.add(1).log(10000)
+            },
+            tooltip: "log10000((Points)+1)",
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
+            unlocked() {
+                if (((hasUpgrade('l', 22)) && (hasUpgrade('c', 31)))||((hasUpgrade('l', 22)) && (hasUpgrade('c', 31) && player.l.unlocked))) return true
+            },
+        },
+        33: {
+            title: "Sub-Control 3",
+            description: "Let Sub-Control boost Control Points.",
+            cost: new Decimal(1e12),
+            currencyDisplayName: "Sub-Control points",
+            currencyInternalName: "subControl",
+            currencyLayer: "c",
+            effect() {
+                return player.c.subControl.add(1).log(1000)
+            },
+            tooltip: "log1000((Wisdom Coins)+1)",
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" },
+            unlocked() {
+                if (hasUpgrade('c', 32)||(hasUpgrade('c', 32) && player.l.unlocked)) return true
             },
         },
         },
@@ -803,11 +987,11 @@ addLayer("k", {
     requires() { return new Decimal(500000) }, // Can be a function that takes requirement increases into account
     resource: "knowledge points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
-    branches: ["i", "c", "p"],
+    branches: ["i", "c"],
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        if (player.k.points.gte("1e7")) return 0.09
+        if (player.k.points.gte("1e7")) return 0.08
         else return 0.1
     }, // Prestige currency exponent
     effect() {
@@ -816,11 +1000,12 @@ addLayer("k", {
         return eff
     },
     effectDescription() {
-        if (player.k.points.gte("1e7")) return "which multiplies point gain by " + format(tmp.k.effect) + "*, which is softcapped by ^0.5."
-        else return "which multiplies point gain by " + format(tmp.k.effect) + "*."
+        if (player.k.points.gte("1e7")) return "which bests' multiplies point gain by <h2 style='color:" + (tmp.k.color)+";text-shadow:0px 0px 10px;'>"+format(tmp.k.effect) + "*</h2>, which is softcapped by ^0.5."
+        else return "which bests' multiplies point gain by <h2 style='color:" + (tmp.k.color)+";text-shadow:0px 0px 10px;'>"+format(tmp.k.effect) + "*</h2>."
     },
     gainMult() {
         let mult = new Decimal(1)
+        if (hasUpgrade('l', 12)) mult = mult.times(upgradeEffect('l', 12))
         if (hasUpgrade('pr', 21)) mult = mult.times(2)
         return mult
     },
@@ -829,7 +1014,12 @@ addLayer("k", {
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "k", description: "K: Reset for knowledge points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "k",
+            description: "K: Reset for knowledge points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     layerShown() { return hasUpgrade('p', 31) || player[this.layer].unlocked },
     unlocked() {
@@ -843,7 +1033,19 @@ addLayer("k", {
                 "blank",
                 ["display-text",
                     function() { return 'You have ' + format(player.points) + ' points' },
-                    { "color": "white", "font-size": "16px" }],
+                { "color": "white", "font-size": "16px" }],
+                ["display-text",
+                    function() { 
+                        if (player.k.best.eq(1)) return 'Your best knowledge points is ' + format(player.k.best) 
+                        else return 'Your best knowledge points are ' + format(player.k.best) 
+                    },
+                { "color": "white", "font-size": "16px" }],
+                ["display-text",
+                    function() { 
+                       if (player.k.total.eq(1)) return 'Your total knowledge points is ' + format(player.k.total) 
+                       else return 'Your total knowledge points are ' + format(player.k.total) 
+                    },
+            { "color": "white", "font-size": "16px" }],
                 "blank",
                 "milestones",
                 "blank",
@@ -881,7 +1083,7 @@ addLayer("k", {
             description: "Unlocks Intensity Challenges.",
             cost: new Decimal(8),
             unlocked() {
-                if (hasUpgrade('k', 11)) return true
+                if (hasUpgrade('k', 11)||player.l.unlocked) return true
             },
         },
         13: {
@@ -889,7 +1091,7 @@ addLayer("k", {
             description: "Unlocks Sub-Control.",
             cost: new Decimal(15),
             unlocked() {
-                if (hasUpgrade('k', 12)) return true
+                if (hasUpgrade('k', 12)||player.l.unlocked) return true
             },
         },
         21: {
@@ -897,18 +1099,18 @@ addLayer("k", {
             description: "Unlock new content.",
             cost: new Decimal(30),
             unlocked() {
-                if (hasUpgrade('k', 13)) return true
+                if (hasUpgrade('k', 13)||player.l.unlocked) return true
             },
         },
         31: {
             title: "Knowledge 5",
             description: "Unlock new content.",
-            cost: new Decimal("1e85"),
+            cost: new Decimal("1e75"),
             currencyDisplayName: "points",
             currencyInternalName: "points",
             currencyLocation() { return player },
             unlocked() {
-                if ((hasUpgrade('pr', 33)) && (hasUpgrade('w', 53))) return true
+                if (((hasUpgrade('pr', 33)) && (hasUpgrade('w', 53)))||player.l.unlocked) return true
             },
         },
         },
@@ -931,11 +1133,11 @@ addLayer("pr", {
         "background": (player.pr.unlocked||player.pr.canReset)?"linear-gradient(#e4ff91, #B5DA44)":"B5DA44" ,
     }},
     requires() {
-        if (player[this.layer].unlockOrder === 1) return new Decimal(5e40)
+        if (player[this.layer].unlockOrder === 1) return new Decimal(1e25)
         else return new Decimal(5e14)
     }, // Can be a function that takes requirement increases into account
     update() {
-        if (hasUpgrade('pr', 32)) player.pr.ptCap = new Decimal(500)
+        if (hasUpgrade('pr', 33)) player.pr.ptCap = new Decimal(500)
         player.pr.practiceToken = player.pr.practiceToken.min(player.pr.ptCap)
     },
     resource: "practice points", // Name of prestige currency
@@ -944,8 +1146,8 @@ addLayer("pr", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        if (player.pr.points.gte("5e4")) return 0.07
-        else return 0.09
+        if (player.pr.points.gte("5e4")) return 0.035
+        else return 0.05
     }, // Prestige currency exponent
     effect() {
         let eff = new Decimal(player[this.layer].total).add(1).pow(0.3)
@@ -953,8 +1155,8 @@ addLayer("pr", {
         return eff
     },
     effectDescription() {
-        if (player.pr.points.gte("5e4")) return "which the total multiplies power point gain by " + format(tmp.pr.effect) + "*, which is softcapped by ^0.5."
-        else return "which the total multiplies power point gain by " + format(tmp.pr.effect) + "*."
+        if (player.pr.points.gte("5e4")) return "which the total multiplies power point gain by <h2 style='color:" + (tmp.pr.color)+";text-shadow:0px 0px 10px;'>"+format(tmp.pr.effect) + "*</h2>, which is softcapped by ^0.5."
+        else return "which the total multiplies power point gain by <h2 style='color:" + (tmp.pr.color)+";text-shadow:0px 0px 10px;'>"+format(tmp.pr.effect) + "*</h2>."
     },
     tabFormat: {
         "Main": {
@@ -964,6 +1166,12 @@ addLayer("pr", {
                 "blank",
                 ["display-text",
                     function() { return 'You have ' + format(player.points) + ' points' },
+                    { "color": "white", "font-size": "16px" }],
+                ["display-text",
+                    function() { 
+                        if (player.pr.total.eq(1)) return 'Your total practice points is ' + format(player.pr.total) 
+                        else return 'Your total practice points are ' + format(player.pr.total) 
+                    },
                     { "color": "white", "font-size": "16px" }],
                 ["display-text",
                     function() { if (hasUpgrade('pr', 12)) return 'You have ' + format(player.pr.practiceToken) + ' Practice Tokens<br>The current Practice Token cap is ' + format(player.pr.ptCap) },
@@ -978,7 +1186,7 @@ addLayer("pr", {
         },
         "Practice Tokens": {
             unlocked() {
-                return (hasUpgrade('pr', 13))
+                return (hasUpgrade('pr', 32))
             },
             content: [
                 "main-display",
@@ -1007,10 +1215,14 @@ addLayer("pr", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    displayRow: 2,
-    row: 3, // Row the layer is in on the tree (0 is the first row)
+    row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "r", description: "R: Reset for practice points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "R",
+            description: "R: Reset for practice points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked || player.w.unlocked},
     unlocked() {
@@ -1025,21 +1237,24 @@ addLayer("pr", {
                 height: '100px',
             },
             cost: new Decimal(1),
+            onPurchase() {
+                return player.lo.points = new Decimal(1)
+            },
         },
         12: {
             title: "Practice 2",
-            description: "Unlock a Clickable and Practice Tokens.",
+            description: "Auto-buy the first two Power Buyables.",
             cost: new Decimal(2),
             unlocked() {
-                if (hasUpgrade('pr', 11)) return true
+                if (hasUpgrade('pr', 11)||player.l.unlocked) return true
             },
         },
         13: {
             title: "Practice 3",
-            description: "Unlock the Practice Token sub-tab.",
+            description: "Passively generate 1% of Intensity Points that can be gained every second.",
             cost: new Decimal(4),
             unlocked() {
-                if (hasUpgrade('pr', 12)) return true
+                if (hasUpgrade('pr', 12)||player.l.unlocked) return true
             },
         },
         21: {
@@ -1050,12 +1265,12 @@ addLayer("pr", {
             currencyInternalName: "practiceToken",
             currencyLayer: "pr",
             unlocked() {
-                if (hasUpgrade('pr', 13)) return true
+                if (hasUpgrade('pr', 32)||player.l.unlocked) return true
             },
         },
         22: {
             title: "Practice Token 2",
-            description: "Let Practice Tokens boost Power Points",
+            description: "Let Practice Tokens boost Power Points.",
             cost: new Decimal(500),
             currencyDisplayName: "Practice Tokens",
             currencyInternalName: "practiceToken",
@@ -1063,37 +1278,39 @@ addLayer("pr", {
             effect() {
                 return player[this.layer].practiceToken.add(1).pow(0.2)
             },
+            tooltip: "(Practice Tokens)+1^0.2",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if (hasUpgrade('pr', 21)) return true
+                if (hasUpgrade('pr', 21)||player.l.unlocked) return true
             },
         },
         31: {
             title: "Practice 4",
-            description: "Auto-buy the first two Power Buyables.",
+            description: "Passively generate 5% of Power Points that can be gained every second.",
             cost: new Decimal(6),
             unlocked() {
-                if (hasUpgrade('pr', 13)) return true
+                if (hasUpgrade('pr', 13)||player.l.unlocked) return true
             },
         },
         32: {
-            title: "Practice 5",
-            description: "Passively generate 5% of Power Points that can be gained every second, and increase Practice Token cap.",
+            title: "Practice 45",
+            description: "Unlock a Clickable and Practice Tokens, and unlock the Practice Token sub-tab.",
             cost: new Decimal(8),
             unlocked() {
-                if (hasUpgrade('pr', 31)) return true
+                if (hasUpgrade('pr', 31)||player.l.unlocked) return true
             },
         },
         33: {
             title: "Practice 6",
-            description: "Boost points based on Practice Points.",
+            description: "Boost points based on Practice Points, and increase Practice Token cap.",
             cost: new Decimal(10),
             effect() {
-                return player[this.layer].points.add(1.25).pow(0.05)
+                return player[this.layer].points.add(1.25).pow(0.3)
             },
+            tooltip: "(Practice)+1.25^0.3",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if (hasUpgrade('pr', 31)) return true
+                if (hasUpgrade('pr', 32)||player.l.unlocked) return true
             },
         },
         },
@@ -1101,7 +1318,7 @@ addLayer("pr", {
             11: {
                 title: "Gain Practice Tokens",
                 unlocked() {
-                    if (hasUpgrade('pr', 12)) return true
+                    if (hasUpgrade('pr', 32)) return true
                 },
                 canClick() {
                     return true
@@ -1130,7 +1347,7 @@ addLayer("w", {
         "background": (player.w.unlocked)?"linear-gradient(#f9c3ff, #ae88b2)":"ae88b2" ,
     }},
     requires() {
-        if (player[this.layer].unlockOrder === 1) return new Decimal(5e40)
+        if (player[this.layer].unlockOrder === 1) return new Decimal(1e25)
         else return new Decimal(5e14)
     }, // Can be a function that takes requirement increases into account
     resource: "wisdom points", // Name of prestige currency
@@ -1148,8 +1365,8 @@ addLayer("w", {
         return eff
     },
     effectDescription() {
-        if (player.w.points.gte("1e5")) return "which the total exponentiates power point gain by " + format(tmp.w.effect) + "^, which is softcapped by ^0.5."
-        else return "which the total exponentiates power point gain by " + format(tmp.w.effect) + "^."
+        if (player.w.points.gte("1e5")) return "which the total exponentiates power point gain by <h2 style='color:" + (tmp.w.color)+";text-shadow:0px 0px 10px;'>"+format(tmp.w.effect) + "^</h2>, which is softcapped by ^0.5."
+        else return "which the total exponentiates power point gain by <h2 style='color:" + (tmp.w.color)+";text-shadow:0px 0px 10px;'>"+format(tmp.w.effect) + "^</h2>."
     },
     increaseUnlockOrder: ['pr'],
     gainMult() {
@@ -1160,10 +1377,14 @@ addLayer("w", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    displayRow: 2,
-    row: 3, // Row the layer is in on the tree (0 is the first row)
+    row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "w", description: "W: Reset for wisdom points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "w",
+            description: "W: Reset for wisdom points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     layerShown() { return hasUpgrade('k', 21) || player[this.layer].unlocked || player.pr.unlocked},
     unlocked() {
@@ -1187,6 +1408,12 @@ addLayer("w", {
                 "blank",
                 ["display-text",
                     function() { return 'You have ' + format(player.points) + ' points' },
+                    { "color": "white", "font-size": "16px" }],
+                ["display-text",
+                    function() { 
+                        if (player.w.total.eq(1)) return 'Your total wisdom points is ' + format(player.w.total) 
+                        else return 'Your total wisdom points are ' + format(player.w.total) 
+                    },
                     { "color": "white", "font-size": "16px" }],
                 "blank",
                 "milestones",
@@ -1218,18 +1445,34 @@ addLayer("w", {
             ],
         },
     },
+    milestones: {
+        0: {
+            requirementDescription: "100 total wisdom points",
+            done() {if (player[this.layer].total.gte(100)) return true},
+            effectDescription: "Keeps the 3 new Power Upgrades.",
+            unlocked() {return (hasUpgrade('w', 11))},
+            },
+    },
     upgrades: {
         11: {
             title: "Wisdom 1",
-            description: "Add 3 more Power Upgrades.",
+            description: "Add 3 more Power Upgrades, and multiply point gain by 2.",
             cost: new Decimal(1),
         },
         12: {
             title: "Wisdom 2",
             description: "Unlock the Wisdom Tree, unlock Wisdom Coins and generate 1 Wisdom Coin per second.",
-            cost: new Decimal(2),
+            cost: new Decimal(1),
             unlocked() {
-                if (hasUpgrade('w', 11)) return true
+                if (hasUpgrade('w', 11)||player.l.unlocked) return true
+            },
+        },
+        13: {
+            title: "Wisdom 3",
+            description: "Passively generate 1% of Control Points that can be gained every second.",
+            cost: new Decimal(100),
+            unlocked() {
+                if ((hasUpgrade('w', 51)&&(hasUpgrade('w', 52))&&(hasUpgrade('w', 53)))||player.l.unlocked) return true
             },
         },
         21: {
@@ -1241,7 +1484,7 @@ addLayer("w", {
             currencyLayer: "w",
             branches: [31, 32],
             unlocked() {
-                if (hasUpgrade('w', 11)) return true
+                if (hasUpgrade('w', 11)||player.l.unlocked) return true
             },
         },
         31: {
@@ -1261,9 +1504,10 @@ addLayer("w", {
             effect() {
                 return player[this.layer].wisdomCoins.add(1).pow(0.2)
             },
+            tooltip: "(Wisdom Coins)+1^0.2",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if (hasUpgrade('w', 21)) return true
+                if (hasUpgrade('w', 21)||player.l.unlocked) return true
             },
         },
         32: {
@@ -1283,9 +1527,10 @@ addLayer("w", {
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
             },
+            tooltip: "(Wisdom)+1^0.5",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if (hasUpgrade('w', 21)) return true
+                if (hasUpgrade('w', 21)||player.l.unlocked) return true
             },
         },
         41: {
@@ -1302,9 +1547,10 @@ addLayer("w", {
             effect() {
                 return player[this.layer].wisdomCoins.add(1).pow(0.1)
             },
+            tooltip: "(Wisdom Coins)+1^0.1",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if ((hasUpgrade('w', 31)) && (hasUpgrade('w', 32))) return true
+                if (((hasUpgrade('w', 31)) && (hasUpgrade('w', 32)))||player.l.unlocked) return true
             },
         },
         51: {
@@ -1325,9 +1571,10 @@ addLayer("w", {
             effect() {
                 return player[this.layer].wisdomCoins.add(1).pow(0.15)
             },
+            tooltip: "(Wisdom Coins)+1^0.15",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if ((hasUpgrade('w', 31)) && (hasUpgrade('w', 32))) return true
+                if ((hasUpgrade('w', 41))||player.l.unlocked) return true
             },
         },
         52: {
@@ -1347,9 +1594,10 @@ addLayer("w", {
             effect() {
                 return new Decimal(player[this.layer].resetTime).add(1).pow(0.2)
             },
+            tooltip: "(Wisdom Reset Time+1^0.2",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if ((hasUpgrade('w', 31)) && (hasUpgrade('w', 32))) return true
+                if ((hasUpgrade('w', 41))||player.l.unlocked) return true
             },
         },
         53: {
@@ -1370,9 +1618,10 @@ addLayer("w", {
             effect() {
                 return player[this.layer].wisdomCoins.add(1).pow(0.135)
             },
+            tooltip: "(Wisdom Coins)+1^0.135",
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if ((hasUpgrade('w', 31)) && (hasUpgrade('w', 32))) return true
+                if ((hasUpgrade('w', 41))||player.l.unlocked) return true
             },
         },
         },
@@ -1388,7 +1637,7 @@ addLayer("l", {
         unlockOrder: 0,
         total: new Decimal(0),
     }},
-    color: "#6e6e6e",
+    color: "#909090",
     requires() {
         return new Decimal("1e100")
     }, // Can be a function that takes requirement increases into account
@@ -1397,7 +1646,7 @@ addLayer("l", {
     branches: ["w", "pr", "k"],
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.02, // Prestige currency exponent
+    exponent: 0.001, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
         return mult
@@ -1407,7 +1656,12 @@ addLayer("l", {
     },
     row: 4, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "l", description: "L: Reset for learning points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "l",
+            description: "L: Reset for learning points",
+            onPress(){if (canReset(this.layer)) doReset(this.layer)},
+            unlocked() {return player[this.layer].unlocked},
+        },
     ],
     layerShown() { return hasUpgrade('k', 31) || player[this.layer].unlocked},
     unlocked() {
@@ -1420,9 +1674,6 @@ addLayer("l", {
                 "prestige-button",
                 "blank",
                 ["display-text",
-                    function() { return 'Currently no content here! Thank you for playing :D' },
-                    { "color": "white", "font-size": "16px" }],
-                ["display-text",
                     function() { return 'You have ' + format(player.points) + ' points' },
                     { "color": "white", "font-size": "16px" }],
                 "blank",
@@ -1434,16 +1685,177 @@ addLayer("l", {
     },
     upgrades: {
         11: {
-            title: "Learning 1",
-            description: "adding later!",
+            title: "Learning 11",
+            description: "Point gain boosted based on total time spent.",
             cost: new Decimal(1),
+            style() {
+                if (player.l.points.gte(1)||tmp[this.layer].upgrades[this.id].unlocked)
+                return {
+                    "height": "150px",
+                    "width": "150px",
+                    "right": "50px",
+                    }
+            else return {
+                "height": "150px",
+                "width": "150px",
+                }
+            },
+            effect() {
+                return new Decimal(player.timePlayed).div(2).pow(0.3)
+            },
+            tooltip: "(Time Played)/2^0.3",
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
         },
         12: {
-            title: "Wisdom 2",
-            description: "adding later!",
-            cost: new Decimal(2),
+            title: "Learning 12",
+            description: "Power, Intensity, Control and Knowledge point gain is boosted based on Learning points.",
+            cost: new Decimal(1),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "50px",
+            },
+            effect() {
+                return player.l.points.add(2).pow(1.5)
+            },
+            tooltip: "(Learning)+2^1.5",
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"*" }, // Add formatting to the effect
             unlocked() {
-                if (hasUpgrade('l', 11)) return true
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        13: {
+            title: "Learning 13",
+            description: "adding later!",
+            cost: new Decimal(10),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "-50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        14: {
+            title: "Learning 14",
+            description: "adding later!",
+            cost: new Decimal(10),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "-50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        21: {
+            title: "Learning 21",
+            description: "Unlock more Intensity Challenges.",
+            cost: new Decimal(1),
+            canAfford() { return hasUpgrade('l', 11) },
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        22: {
+            title: "Learning 22",
+            description: "Unlock more content for Sub-Control.",
+            canAfford() { return hasUpgrade('l', 12) },
+            cost: new Decimal(1),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        23: {
+            title: "Learning 23",
+            description: "adding later!",
+            cost: new Decimal(25),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "-50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        24: {
+            title: "Learning 24",
+            description: "adding later!",
+            cost: new Decimal(25),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "-50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        31: {
+            title: "Learning 31",
+            description: "Unlock more content for Power.",
+            canAfford() { return hasUpgrade('l', 21) },
+            cost: new Decimal(1),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        32: {
+            title: "Learning 32",
+            description: "The layer effect for Knowledge is multiplied by 2.",
+            canAfford() { return hasUpgrade('l', 22) },
+            cost: new Decimal(1),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        33: {
+            title: "Learning 33",
+            description: "adding later!",
+            cost: new Decimal(60),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "-50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
+            },
+        },
+        34: {
+            title: "Learning 34",
+            description: "adding later!",
+            cost: new Decimal(60),
+            style: {
+                "height": "150px",
+                "width": "150px",
+                "right": "-50px",
+            },
+            unlocked() {
+                if (player.l.points.gte(1)||(hasUpgrade('l',13))||tmp[this.layer].upgrades[this.id].unlocked||player.l.unlocked) return true
             },
         },
         },

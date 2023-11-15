@@ -1,7 +1,7 @@
 let modInfo = {
 	name: "Abstract Tree",
 	id: "ATJTAT",
-	author: "JToH_SC, inspired by The Tree of Life (by pg132), The Prestreestuck (by ducdat0507), and Incremental God Tree (by Icecreamdude).",
+	author: "JToH_SC, inspired by The Tree of Life (by pg132), The Prestreestuck (by ducdat0507), Incremental God Tree (by Icecreamdude), and The Experimental Tree (by Acythe3).",
 	pointsName: "points",
 	modFiles: ["EC1.js", "tree.js"],
 
@@ -13,15 +13,28 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.23",
+	num: "0.2.2",
 	name: "Early Early-Mid Chapter 1: Part 3",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.23</h3><br>
+	<h2>Version Notation</h2><br>
+	<h3>va.b.cd</h3><br>
+	a - new chapter<br>
+	b - new sub-chapter<br>
+	c - new sub-sub-chapter<br>
+	d - small patch/balancing<br>
+	<br>
+	<h3>v0.2.2</h3><br>
+		- Added a broken newsticker.<br>
 		- Fixed descriptions.<br>
-		- Added another Power Buyable.<br>
-	<h3>v0.22</h3><br>
+		- Softcapped Power Buyable 1's cost.<br>
+		- Colored layer effects.<br>
+		- Balanced upgrades, and added QoL.<br>
+		- Added 12 Learning upgrades.<br>
+		- Balanced more stuff!<br>
+		- Made it so that when you hover over a bought upgrade, it increases by 1.4x.>.<br>
+	<h3>v0.2.1</h3><br>
 		- Added lore.<br>
 		- Added another Power Buyable.<br>
 		- Designed Practices' node.<br>
@@ -33,20 +46,20 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Nerfed LOTS of effects to prevent inflation.<br>
 		- Added lots of softcaps.<br>
 		- ENDGAME: 1e100 points<br>
-	<h3>v0.21111</h3><br>
+	<h3>v0.2.03</h3><br>
 		- Hopefully fixed knowledge gain.<br>
 		- ENDGAME: 5e14 points<br>
-	<h3>v0.2111</h3><br>
+	<h3>v0.2.02</h3><br>
 		- Nerfed Intensity 3 and 6.<br>
 		- Nerfed Knowledge and Practice boost.<br>
 		- Achievements now count, and added 32 new achievements, which cannot be achieved yet.<br>
 		- ENDGAME: 5E14 points<br>
-	<h3>v0.211</h3><br>
+	<h3>v0.2.01</h3><br>
 		- Added an achievement layer, with 8 achievements.<br>
 		- Added new QoL for Power, Intensity, and Control.<br>
 		- Nerfed Control 6.<br>
 		- ENDGAME: 4e20 points<br>
-	<h3>v0.21</h3><br>
+	<h3>v0.2.0</h3><br>
 		- Added 3 new layers, "Knowledge", "Practice", and "Wisdom".<br>
 		- Added a layer effect to "Knowledge".<br>
 		- Added 4 upgrades to Knowledge.<br>
@@ -54,7 +67,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added Intensity Challenges.<br>
 		- Added Sub-Control.<br>
 		- ENDGAME: 2e37 points<br>
-	<h3>v0.1</h3><br>
+	<h3>v0.0.1</h3><br>
 		- Game is created.<br>
 		- Added three layers, "Power", "Intensity", and "Control".<br>
 		- Added 7 upgrades to "Power".<br>
@@ -83,8 +96,11 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade('l', 11)) gain = gain.times(upgradeEffect('l', 11))
+	if (hasUpgrade('w', 11)) gain = gain.times(2)
 	if (hasUpgrade('pr', 33)) gain = gain.times(upgradeEffect('pr', 33))
 	if (hasUpgrade('p', 32)) gain = gain.times(2.75)
+	if (hasUpgrade('pr', 11)) gain = gain.times(buyableEffect("p", 12))
 	if (hasUpgrade('k', 11)) gain = gain.times(buyableEffect("p", 11))
 	if (player.k.unlocked) gain = gain.times(tmp.k.effect)
 	if (hasMilestone('k', 1)) gain = gain.times(2)
@@ -107,17 +123,18 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+	newsTotal: new Decimal(0)
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Endgame: 1e100 Points",
+	"Endgame: 1e200 Points",
 	"You are at: Early Chapter 1"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e100"))
+	return player.points.gte(new Decimal("1e200"))
 }
 
 
