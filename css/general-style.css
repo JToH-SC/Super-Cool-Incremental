@@ -4,8 +4,9 @@ body {
 	overflow: hidden;
 	--background: #0f0f0f;
 	--color: #dfdfdf;
-	--points: #ffffff;
-	background: var(--background)
+	--points: #0099ff;
+	background: var(--background);
+	background-image: url(https://img.freepik.com/premium-vector/abstract-stippled-seamless-pattern-dotted-grunge-background_87538-1409.jpg?w=360)
 }
 
 /* General text */
@@ -16,7 +17,7 @@ h1, h2, h3, b, input {
 
 /* These are styles for different states of components. You can make layer-specific versions with .c.locked, for example */
 .locked {
-	background-color: #bf8f8f;
+	background-color: #e77777;
 	cursor: not-allowed;
 }
 
@@ -31,11 +32,35 @@ h1, h2, h3, b, input {
 }
 
 .bought {
-	background-color: #77bf5f;
+	background-color: #64d19e;
 	cursor: default;
+}
+
+.bought:hover {
+	transform: scale(1.4, 1.4);
+	z-index: 2;
+	box-shadow: 0 0 20px var(--points)
 }
 
 #points {
 	color: var(--points);
 	text-shadow: 0 0 10px var(--points);
+}
+
+#newsTicker {
+	margin: 20px;
+	margin-left: 50px;
+	margin-right: 50px;
+
+	border: 3px solid white;
+	border-radius: 5px;
+
+  padding: 5px;
+
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#newsContent {
+	transition-duration: 0s !important;
 }
